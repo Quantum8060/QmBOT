@@ -276,6 +276,7 @@ class EmbedModal(discord.ui.Modal):
 
         await webhook.send(embed=embed)
         await interaction.response.send_message("送信しました。\n※エラー防止用のメッセージです。", ephemeral=True)
+        await webhook.delete()
 
 @bot.slash_command(name="embed", description="メッセージを埋め込みにして送信します。")
 async def webhookembed(ctx: discord.ApplicationContext):
