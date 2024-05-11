@@ -48,7 +48,6 @@ async def on_ready():
 @bot.slash_command(name="ping", description="BotのPingを確認します。")
 async def ping(interaction: discord.Interaction):
 
-
     user_id = str(interaction.author.id)
 
     data = load_data()
@@ -64,13 +63,21 @@ async def ping(interaction: discord.Interaction):
 #clear
 @bot.slash_command(name="clear", description="指定された数のメッセージを削除します。")
 @commands.has_permissions(administrator = True)
-async def clear(ctx: discord.ApplicationContext, num: discord.Option(str, required=True, description="削除するメッセージ数を入力")):
-    async for message in ctx.channel.history(limit=int(num)):
-        await message.delete(delay=1.2)
+async def clear(interaction: discord.ApplicationContext, num: discord.Option(str, required=True, description="削除するメッセージ数を入力")):
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+
+        async for message in interaction.channel.history(limit=int(num)):
+            await message.delete(delay=1.2)
     
-    embed=discord.Embed(title="メッセージ削除", description=f"{num}メッセージを削除しました。", color=0x4169e1)
-    embed.add_field(name="", value="")
-    await ctx.respond(embeds=[embed], ephemeral=True)
+        embed=discord.Embed(title="メッセージ削除", description=f"{num}メッセージを削除しました。", color=0x4169e1)
+        embed.add_field(name="", value="")
+        await interaction.respond(embeds=[embed], ephemeral=True)
+    else:
+        await interaction.response("あなたはブラックリストに登録されています。", ephemeral=True)
 
 @clear.error
 async def clearerror(ctx, error):
@@ -206,10 +213,17 @@ class dmModal(discord.ui.Modal):
 
 @bot.slash_command(name="dm", description="指定したユーザーにDMを送ります。")
 @commands.has_permissions(administrator = True)
-async def dm(ctx: discord.ApplicationContext):
-    modal = dmModal(title="DM送信用フォーム")
-    await ctx.send_modal(modal)
-    await ctx.respond("フォームでの入力を待機しています…", ephemeral=True)
+async def dm(interaction: discord.ApplicationContext):
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+        modal = dmModal(title="DM送信用フォーム")
+        await interaction.send_modal(modal)
+        await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 @dm.error
 async def adminerror(ctx, error):
@@ -224,16 +238,23 @@ async def adminerror(ctx, error):
 #minecraft server online checker
 @bot.slash_command(name="online_check", description="Minecraftのサーバーステータスを確認します。")
 @commands.cooldown(1, 30, commands.BucketType.user)
-async def mcsinfo(ctx: discord.ApplicationContext, server_address: discord.Option(str, required=True, description="返信内容を記入")):
-   embed = discord.Embed(title=f"{server_address}のオンライン状況")
-   embed.add_field(name="", value="")
-   embed.set_image(url=f"https://api.mcstatus.io/v2/widget/java/{server_address}")
-   embed.set_author(name="Minecraftサーバーオンライン確認")
+async def mcsinfo(interaction: discord.ApplicationContext, server_address: discord.Option(str, required=True, description="返信内容を記入")):
+    user_id = str(interaction.author.id)
 
-   await ctx.respond(embed=embed, ephemeral=True)
+    data = load_data()
+
+    if user_id not in data:
+        embed = discord.Embed(title=f"{server_address}のオンライン状況")
+        embed.add_field(name="", value="")
+        embed.set_image(url=f"https://api.mcstatus.io/v2/widget/java/{server_address}")
+        embed.set_author(name="Minecraftサーバーオンライン確認")
+
+        await interaction.respond(embed=embed, ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
-  
+
 #suggestion
 class suggestionModal(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
@@ -253,54 +274,83 @@ class suggestionModal(discord.ui.Modal):
         await interaction.user.dm_channel.send(f"以下の内容で送信しました。\n管理者からBOTで返信が来る可能性がありますのでご了承ください。\n```{self.children[0].value}```")
 
 @bot.slash_command(name="suggestion", description="BOT管理者に機能の提案やエラーなどの報告を行うことができます。", )
-async def suggestion(ctx: discord.ApplicationContext):
-    modal = suggestionModal(title="BOT管理者に送信。")
-    await ctx.send_modal(modal)
-    await ctx.respond("フォームでの入力を待機しています…", ephemeral=True)
+async def suggestion(interaction: discord.ApplicationContext):
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+        modal = suggestionModal(title="BOT管理者に送信。")
+        await interaction.send_modal(modal)
+        await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 
 #invite
 @bot.slash_command(name="invite", description="BOTを招待します。")
 @commands.cooldown(1, 30, commands.BucketType.user)
-async def invite(ctx: discord.ApplicationContext):
-  button = discord.ui.Button(label="Invite BOT!", style=discord.ButtonStyle.primary, url="https://discord.com/oauth2/authorize?client_id=1057679845087252521&permissions=8&scope=bot+applications.commands")
+async def invite(interaction: discord.ApplicationContext):
+        
+    user_id = str(interaction.author.id)
 
-  embed=discord.Embed(title="QmBOT招待", description="BOTを招待する場合は下のボタンを押してください。", color=0x4169e1)
-  embed.add_field(name="", value="")
-  embed.set_footer(text="This BOT developer -> @7984_at")
-  view = discord.ui.View()
-  view.add_item(button)
-  await ctx.response.send_message(embed=embed, view=view, ephemeral=True)
+    data = load_data()
+
+    if user_id not in data:
+        button = discord.ui.Button(label="Invite BOT!", style=discord.ButtonStyle.primary, url="https://discord.com/oauth2/authorize?client_id=1057679845087252521&permissions=8&scope=bot+applications.commands")
+
+        embed=discord.Embed(title="QmBOT招待", description="BOTを招待する場合は下のボタンを押してください。", color=0x4169e1)
+        embed.add_field(name="", value="")
+        embed.set_footer(text="This BOT developer -> @7984_at")
+        view = discord.ui.View()
+        view.add_item(button)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 
 #anonymous chat
 @bot.slash_command(name="anonymous", description="匿名で送信します。")
 @commands.cooldown(1, 10, commands.BucketType.user)
-async def anonymous(ctx: discord.ApplicationContext, text: discord.Option(str, description="匿名メッセージを送信します。")):
-   
-   embed=discord.Embed()
-   embed.add_field(name="", value=f"{text}", inline=False)
+async def anonymous(interaction: discord.ApplicationContext, text: discord.Option(str, description="匿名メッセージを送信します。")):
 
-   await ctx.respond("匿名メッセージを送信しました。", ephemeral=True)
-   await ctx.channel.send(embed=embed)
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+        embed=discord.Embed()
+        embed.add_field(name="", value=f"{text}", inline=False)
+
+        await interaction.respond("匿名メッセージを送信しました。", ephemeral=True)
+        await interaction.channel.send(embed=embed)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
    
 
 #anonymous image
 @bot.slash_command(name="anonymous_im", description="匿名で送信します。")
 @commands.cooldown(1, 10, commands.BucketType.user)
-async def anonymousIM(ctx: discord.ApplicationContext, picture: discord.Attachment):
-   
-   embed=discord.Embed()
-   embed.set_image(url=picture.url)
-   embed.add_field(name="", value="")
-   embed.set_footer(text="匿名画像")
+async def anonymousIM(interaction: discord.ApplicationContext, picture: discord.Attachment):
+
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+        embed=discord.Embed()
+        embed.set_image(url=picture.url)
+        embed.add_field(name="", value="")
+        embed.set_footer(text="匿名画像")
    
 
-   await ctx.respond("匿名画像メッセージを送信しました。", ephemeral=True)
-   await ctx.channel.send(embed=embed)
+        await interaction.respond("匿名画像メッセージを送信しました。", ephemeral=True)
+        await interaction.channel.send(embed=embed)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 
@@ -325,10 +375,18 @@ class EmbedModal(discord.ui.Modal):
         await webhook.delete()
 
 @bot.slash_command(name="embed", description="メッセージを埋め込みにして送信します。")
-async def webhookembed(ctx: discord.ApplicationContext):
-    modal = EmbedModal(title="Embedコマンド")
-    await ctx.send_modal(modal)
-    await ctx.respond("フォームでの入力を待機しています…", ephemeral=True)
+async def webhookembed(interaction: discord.ApplicationContext):
+
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+        modal = EmbedModal(title="Embedコマンド")
+        await interaction.send_modal(modal)
+        await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 '''
@@ -379,24 +437,36 @@ def save_data(data):
 @bot.slash_command(name="add_blacklist", description="ユーザーをブラックリストに追加します。", guild_ids=Debug_guild)
 @commands.has_permissions(administrator = True)
 async def a_blacklist(interaction: discord.Interaction, user: discord.Member, reason: discord.Option(str, description="理由を入力します。")):
-    user_id = await bot.fetch_user(f"{user.id}")
-    
+    b_id = str(interaction.author.id)
+
     data = load_data()
 
-    if user_id not in data:
-        await interaction.respond(f"{user.mention}をブラックリストに追加しました。", ephemeral=True)
+    if b_id not in data:
 
-        data[str(user.id)] = reason
-        save_data(data)
+        user_id = await bot.fetch_user(f"{user.id}")
+    
+        data = load_data()
+
+        if user_id not in data:
+            await interaction.respond(f"{user.mention}をブラックリストに追加しました。", ephemeral=True)
+
+            data[str(user.id)] = reason
+            save_data(data)
+        else:
+            await interaction.response.send_message("このユーザーはすでにブラックリストに追加されています。", ephemeral=True)
     else:
-        await interaction.response.send_message("このユーザーはすでにブラックリストに追加されています。", ephemeral=True)
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 
 #show blacklist
 @bot.slash_command(name="show_blacklist", description="ブラックリストを一覧表示します。", guild_ids=Debug_guild)
 async def s_blacklist(interaction: discord.ApplicationContext):
-    if user_id not in data:
+    b_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if b_id not in data:
         try:
             with open(blacklist_file, 'r') as file:
                 data = json.load(file)
@@ -414,7 +484,6 @@ async def s_blacklist(interaction: discord.ApplicationContext):
         embed.add_field(name="ブラックリストユーザーの一覧です。", value=user_info, inline=False)
     
         await interaction.response.send_message(embed=embed, ephemeral=True)
-
     else:
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
