@@ -9,6 +9,7 @@ from yt_dlp import YoutubeDL
 from discord import webhook
 from time import sleep
 import aiohttp
+import json
 
 intents = discord.Intents.default()
 intents.message_content = (True)
@@ -317,5 +318,52 @@ async def stop_recording(ctx:discord.ApplicationContext):
     await ctx.respond("録音終了")
     await ctx.voice_client.disconnect()
 '''
+
+blacklist_file = 'blacklist.json'
+
+def load_data():
+    with open(blacklist_file, 'r') as file:
+        return json.load(file)
+
+# データをJSONファイルに書き込む関数
+def save_data(data):
+    with open(blacklist_file, 'w') as file:
+        json.dump(data, file, indent=4)
+
+#add blacklist
+@bot.slash_command(name="add_blacklist", description="ユーザーをブラックリストに追加します。", guild_ids=Debug_guild)
+async def a_blacklist(interaction: discord.Interaction, user: discord.Member, reason: discord.Option(str, description="理由を入力します。")):
+    user_id = await bot.fetch_user(f"{user.id}")
+    
+    data = load_data()
+
+    if user_id not in data:
+        await interaction.respond(f"{user.mention}をブラックリストに追加しました。", ephemeral=True)
+
+        data[str(user.id)] = reason
+        save_data(data)
+
+    else:
+        await interaction.respond("このユーザーはすでにブラックリストに追加されています。", ephemeral=True)
+
+
+'''
+#remove blacklist
+@bot.slash_command(name="remove_blacklist", description="ユーザーをブラックリストから削除します。")
+async def r_blacklist(interaction: discord.Interaction, user: discord.Member):
+    
+    user_id = await bot.fetch_user(f"{user.id}")
+    
+    data = load_data()
+
+    if user_id not in data:
+        await interaction.respond(f"{user.mention}はブラックリストに存在しません。", ephemeral=True)
+    
+    else:
+        await interaction.respond(f"{user.mention}をブラックリストから削除しました。", ephemeral=True)
+
+        del data
+'''
+
 
 bot.run(TOKEN)
