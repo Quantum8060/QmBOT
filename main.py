@@ -21,6 +21,16 @@ bot = discord.Bot(intents=intents)
 bot.webhooks = {} # !create で作成したWebhookをおいておく場所
 Debug_guild = [1235247721934360577]
 
+blacklist_file = 'blacklist.json'
+
+def load_data():
+    with open(blacklist_file, 'r') as file:
+        return json.load(file)
+
+# データをJSONファイルに書き込む関数
+def save_data(data):
+    with open(blacklist_file, 'w') as file:
+        json.dump(data, file, indent=4)
 
 
 #起動通知
@@ -36,10 +46,18 @@ async def on_ready():
 
 #ping
 @bot.slash_command(name="ping", description="BotのPingを確認します。")
-async def ping(ctx: discord.Interaction):
-  embed = discord.Embed(title="Ping",
-                        description="`{0}ms`".format(round(bot.latency * 1000, 2)))
-  await ctx.response.send_message(embed=embed)
+async def ping(interaction: discord.Interaction):
+
+
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+        embed = discord.Embed(title="Ping", description="`{0}ms`".format(round(bot.latency * 1000, 2)))
+        await interaction.response.send_message(embed=embed)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 
@@ -66,79 +84,106 @@ async def clearerror(ctx, error):
 
 #userinfo
 @bot.slash_command(name="userinfo", description="ユーザー情報を取得します")
-async def userinfo(ctx: discord.Interaction, user:discord.Member):
+async def userinfo(interaction: discord.Interaction, user:discord.Member):
 
-    user = await bot.fetch_user(f"{user.id}")
+    user_id = str(interaction.author.id)
 
-    embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
-    embed.add_field(name="表示名", value=user.display_name,inline=True)
-    embed.add_field(name="ユーザーID", value=user.id,inline=True)
-    embed.add_field(name="メンション", value=user.mention, inline=True)
-    embed.add_field(name="アカウント作成日", value=user.created_at)
-    embed.add_field(name="アイコンURL", value=f"[アイコンのURLはこちら！]({user.avatar.url})")
-    embed.set_footer(text="Userinfoサービス")
-    embed.set_thumbnail(url=user.avatar.url)
-    await ctx.response.send_message(embed=embed, ephemeral=True)
+    data = load_data()
+
+    if user_id not in data:
+
+        user = await bot.fetch_user(f"{user.id}")
+
+        embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
+        embed.add_field(name="表示名", value=user.display_name,inline=True)
+        embed.add_field(name="ユーザーID", value=user.id,inline=True)
+        embed.add_field(name="メンション", value=user.mention, inline=True)
+        embed.add_field(name="アカウント作成日", value=user.created_at)
+        embed.add_field(name="アイコンURL", value=f"[アイコンのURLはこちら！]({user.avatar.url})")
+        embed.set_footer(text="Userinfoサービス")
+        embed.set_thumbnail(url=user.avatar.url)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 @bot.user_command(name="userinfo")
-async def userinfo(ctx, user: discord.Member):
-   
+async def userinfo(interaction, user: discord.Member):
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+    
     user = await bot.fetch_user(f"{user.id}")
 
-    embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
-    embed.add_field(name="表示名", value=user.display_name,inline=True)
-    embed.add_field(name="ユーザーID", value=user.id,inline=True)
-    embed.add_field(name="メンション", value=user.mention, inline=True)
-    embed.add_field(name="アカウント作成日", value=user.created_at)
-    embed.add_field(name="アイコンURL", value=f"[アイコンのURLはこちら！]({user.avatar.url})")
-    embed.set_footer(text="Userinfoサービス")
-    embed.set_thumbnail(url=user.avatar.url)
-    await ctx.respond(embed=embed, ephemeral=True)
+    if user_id not in data:
+
+        embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
+        embed.add_field(name="表示名", value=user.display_name,inline=True)
+        embed.add_field(name="ユーザーID", value=user.id,inline=True)
+        embed.add_field(name="メンション", value=user.mention, inline=True)
+        embed.add_field(name="アカウント作成日", value=user.created_at)
+        embed.add_field(name="アイコンURL", value=f"[アイコンのURLはこちら！]({user.avatar.url})")
+        embed.set_footer(text="Userinfoサービス")
+        embed.set_thumbnail(url=user.avatar.url)
+        await interaction.respond(embed=embed, ephemeral=True)
+    else:
+        await interaction.respond("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 
 #get server icon
 @bot.slash_command(name="servericon", description="サーバーのアイコンを取得します。")
-async def servericon(ctx: discord.Interaction):
-  try:
-    guildicon = ctx.guild.icon.replace(static_format='png')
-  except:
-    embed = discord.Embed(title="アイコン取得失敗",
-                          description="アイコンを取得できません")
-    await ctx.response.send_message(embed=embed, ephemeral=True)
-  else:
-    embed = discord.Embed(title="アイコン取得完了",
-                          description="サーバーアイコンを取得しました。",
-                          color=0x4169e1)
-    embed.set_thumbnail(url=guildicon)
-    await ctx.response.send_message(embed=embed, ephemeral=True)
+async def servericon(interaction: discord.Interaction):
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+  
+
+        try:
+            guildicon = interaction.guild.icon.replace(static_format='png')
+        except:
+            embed = discord.Embed(title="アイコン取得失敗", description="アイコンを取得できません")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        else:
+            embed = discord.Embed(title="アイコン取得完了", description="サーバーアイコンを取得しました。", color=0x4169e1)
+            embed.set_thumbnail(url=guildicon)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 
 #DL youtube
 @bot.slash_command(name="youtube", description="YouTube動画のダウンロードリンクを取得します", )
-async def ytdl(ctx: discord.Interaction, url:discord.Option(str, required=True, description="ダウンロードしたい動画のURLを入力") ):
-  await ctx.response.defer()
+async def ytdl(interaction: discord.Interaction, url:discord.Option(str, required=True, description="ダウンロードしたい動画のURLを入力") ):
+
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+        await interaction.response.defer()
   
-  youtube_dl_opts = {'format' : 'best'}
+        youtube_dl_opts = {'format' : 'best'}
 
-  try:
-    with YoutubeDL(youtube_dl_opts) as ydl:
-        info_dict = ydl.extract_info(url, download=False)
-        video_url = info_dict.get("url", None)
-        video_title = info_dict.get('title', None)
+        try:
+            with YoutubeDL(youtube_dl_opts) as ydl:
+                info_dict = ydl.extract_info(url, download=False)
+                video_url = info_dict.get("url", None)
+                video_title = info_dict.get('title', None)
 
-  except:
-    embed = discord.Embed(title=":x: エラー",
-                          description="エラーが発生しました。",
-                          color=0x4169e1)
-    await ctx.followup.send(embed=embed)
+        except:
+            embed = discord.Embed(title=":x: エラー", description="エラーが発生しました。", color=0x4169e1)
+            await interaction.followup.send(embed=embed)
 
-  else:
-    embed = discord.Embed(title="動画DLリンク取得完了",description="`{0}`のダウンロードリンクを取得しました。\n\n[クリックしてダウンロード]({1})\n:warning: 著作権に違反してアップロードされた動画をダウンロードする行為は違法です".format(video_title, video_url),color=0x4169e1)
-    await ctx.followup.send(embed=embed)
+        else:
+            embed = discord.Embed(title="動画DLリンク取得完了",description="`{0}`のダウンロードリンクを取得しました。\n\n[クリックしてダウンロード]({1})\n:warning: 著作権に違反してアップロードされた動画をダウンロードする行為は違法です".format(video_title, video_url),color=0x4169e1)
+            await interaction.followup.send(embed=embed)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
-
+    
 
 #DM
 class dmModal(discord.ui.Modal):
@@ -332,6 +377,7 @@ def save_data(data):
 
 #add blacklist
 @bot.slash_command(name="add_blacklist", description="ユーザーをブラックリストに追加します。", guild_ids=Debug_guild)
+@commands.has_permissions(administrator = True)
 async def a_blacklist(interaction: discord.Interaction, user: discord.Member, reason: discord.Option(str, description="理由を入力します。")):
     user_id = await bot.fetch_user(f"{user.id}")
     
@@ -343,28 +389,34 @@ async def a_blacklist(interaction: discord.Interaction, user: discord.Member, re
         data[str(user.id)] = reason
         save_data(data)
     else:
-        await interaction.respond("このユーザーはすでにブラックリストに追加されています。", ephemeral=True)
+        await interaction.response.send_message("このユーザーはすでにブラックリストに追加されています。", ephemeral=True)
 
 
 
-#
+#show blacklist
 @bot.slash_command(name="show_blacklist", description="ブラックリストを一覧表示します。", guild_ids=Debug_guild)
-async def s_blacklist(ctx: discord.ApplicationContext):
-    try:
-        with open(blacklist_file, 'r') as file:
-            data = json.load(file)
-    except FileNotFoundError:
-        await ctx.send("データファイルが見つかりませんでした。")
-        return
+async def s_blacklist(interaction: discord.ApplicationContext):
+    if user_id not in data:
+        try:
+            with open(blacklist_file, 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            await interaction.send("データファイルが見つかりませんでした。")
+            return
 
-    embed = discord.Embed(title="ブラックリストユーザー一覧")
-    
-    user_info = "\n".join([f"<@!{key}> : {value}" for key, value in data.items()])
-    embed.add_field(name="ブラックリストユーザーの一覧です。", value=user_info, inline=False)
-    
-    
-    await ctx.respond(embed=embed, ephemeral=True)
+        user_id = str(interaction.author.id)
 
+        data = load_data()
+
+        embed = discord.Embed(title="ブラックリストユーザー一覧")
+    
+        user_info = "\n".join([f"<@!{key}> : {value}" for key, value in data.items()])
+        embed.add_field(name="ブラックリストユーザーの一覧です。", value=user_info, inline=False)
+    
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 bot.run(TOKEN)
