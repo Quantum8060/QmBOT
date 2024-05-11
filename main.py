@@ -285,7 +285,7 @@ async def webhookembed(ctx: discord.ApplicationContext):
     await ctx.respond("フォームでの入力を待機しています…", ephemeral=True)
 
 
-
+'''
 @bot.slash_command(name="r_start", description="VCの録音を開始します。")
 async def start_record(ctx:discord.ApplicationContext):
     # コマンドを使用したユーザーのボイスチャンネルに接続
@@ -316,7 +316,6 @@ async def stop_recording(ctx:discord.ApplicationContext):
     ctx.voice_client.stop_recording()
     await ctx.respond("録音終了")
     await ctx.voice_client.disconnect()
-
-
+'''
 
 bot.run(TOKEN)
