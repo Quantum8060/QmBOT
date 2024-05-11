@@ -434,7 +434,7 @@ def save_data(data):
         json.dump(data, file, indent=4)
 
 #add blacklist
-@bot.slash_command(name="add_blacklist", description="ユーザーをブラックリストに追加します。", guild_ids=Debug_guild)
+@bot.slash_command(name="add_blacklist", description="ユーザーをブラックリストに追加します。")
 @commands.has_permissions(administrator = True)
 async def a_blacklist(interaction: discord.Interaction, user: discord.Member, reason: discord.Option(str, description="理由を入力します。")):
     b_id = str(interaction.author.id)
@@ -460,7 +460,7 @@ async def a_blacklist(interaction: discord.Interaction, user: discord.Member, re
 
 
 #show blacklist
-@bot.slash_command(name="show_blacklist", description="ブラックリストを一覧表示します。", guild_ids=Debug_guild)
+@bot.slash_command(name="show_blacklist", description="ブラックリストを一覧表示します。")
 async def s_blacklist(interaction: discord.ApplicationContext):
     b_id = str(interaction.author.id)
 
