@@ -342,28 +342,29 @@ async def a_blacklist(interaction: discord.Interaction, user: discord.Member, re
 
         data[str(user.id)] = reason
         save_data(data)
-
     else:
         await interaction.respond("このユーザーはすでにブラックリストに追加されています。", ephemeral=True)
 
 
-'''
-#remove blacklist
-@bot.slash_command(name="remove_blacklist", description="ユーザーをブラックリストから削除します。")
-async def r_blacklist(interaction: discord.Interaction, user: discord.Member):
-    
-    user_id = await bot.fetch_user(f"{user.id}")
-    
-    data = load_data()
 
-    if user_id not in data:
-        await interaction.respond(f"{user.mention}はブラックリストに存在しません。", ephemeral=True)
-    
-    else:
-        await interaction.respond(f"{user.mention}をブラックリストから削除しました。", ephemeral=True)
+#
+@bot.slash_command(name="show_blacklist", description="ブラックリストを一覧表示します。", guild_ids=Debug_guild)
+async def s_blacklist(ctx: discord.ApplicationContext):
+    try:
+        with open(blacklist_file, 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        await ctx.send("データファイルが見つかりませんでした。")
+        return
 
-        del data
-'''
+    embed = discord.Embed(title="ブラックリストユーザー一覧")
+    
+    user_info = "\n".join([f"<@!{key}> : {value}" for key, value in data.items()])
+    embed.add_field(name="ブラックリストユーザーの一覧です。", value=user_info, inline=False)
+    
+    
+    await ctx.respond(embed=embed, ephemeral=True)
+
 
 
 bot.run(TOKEN)
