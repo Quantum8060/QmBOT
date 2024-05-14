@@ -32,7 +32,6 @@ def save_data(data):
     with open(blacklist_file, 'w') as file:
         json.dump(data, file, indent=4)
 
-
 #起動通知
 @bot.event
 async def on_ready():
@@ -486,6 +485,41 @@ async def s_blacklist(interaction: discord.ApplicationContext):
         await interaction.response.send_message(embed=embed, ephemeral=True)
     else:
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+
+
+
+#open message
+@bot.event
+async def on_message(message):
+    if "https://discord.com/channels/" in message.content:
+        link = message.content.split("https://discord.com/channels/")[1]
+        guild_id, channel_id, message_id = map(int, link.split("/"))
+        
+        if message.guild.id != guild_id:
+            return
+        try:
+            target_channel = bot.get_guild(guild_id).get_channel(channel_id)
+            target_message = await target_channel.fetch_message(message_id)
+
+            content = target_message.content
+            author = target_message.author
+            target_message_link = f"https://discord.com/channels/{guild_id}/{channel_id}/{message_id}"
+
+            embed = discord.Embed(description=content, color=0x00bfff, timestamp=target_message.created_at)
+            embed.set_author(name=author.display_name, icon_url=author.avatar.url if author.avatar else author.default_avatar.url)
+            embed.set_footer(text=f"From #{target_message.channel}")
+
+            if target_message.attachments:
+                attachment = target_message.attachments[0]
+                if any(attachment.filename.lower().endswith(image_ext) for image_ext in ['png', 'jpg', 'jpeg', 'gif', 'webp']):
+                    embed.set_image(url=attachment.url)
+
+            for original_embed in target_message.embeds:
+                await message.channel.send(embed=original_embed)
+
+        except Exception as e:
+            print(f"エラーらしい: {e}")
+
 
 
 bot.run(TOKEN)
