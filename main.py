@@ -526,4 +526,83 @@ async def on_message(message):
 
 
 
+#help
+class MyView(discord.ui.View): # Create a class called MyView that subclasses discord.ui.View
+    @discord.ui.button(label="管理者用コマンド一覧", style=discord.ButtonStyle.green) # Create a button with the label "😎 Click me!" with color Blurple
+    async def help1(self, button: discord.ui.Button, interaction):
+        embed = discord.Embed(title="```管理者用コマンド一覧を表示しています。```",
+                      description="ここに載っていないコマンドが一部存在していますが、BOT開発者専用のため使用することはできません。")
+
+        embed.set_author(name="管理者用コマンド一覧")
+
+        embed.add_field(name="/add_blacklist",
+                value="```ブラックリストにユーザーを登録します。```",
+                inline=False)
+        embed.add_field(name="/show_blacklist",
+                value="```ブラックリストを表示します。```",
+                inline=False)
+        embed.add_field(name="/dm",
+                value="指定したユーザーにDMを送信します。",
+                inline=False)
+        embed.add_field(name="/clear",
+                value="```指定した数のメッセージを削除します。```",
+                inline=False)
+        embed.add_field(name="☆ほしい機能等があれば`/suggestion`でお願いします。",
+                value="",
+                inline=False)          
+
+        await interaction.response.send_message(embed=embed,ephemeral=True) # Send a message when the button is clicked
+    
+    @discord.ui.button(label="機能系コマンド一覧", style=discord.ButtonStyle.primary) # Create a button with the label "😎 Click me!" with color Blurple
+    async def help2(self, button: discord.ui.Button, interaction):
+
+        embed = discord.Embed(title="```機能系コマンド一覧を表示しています。```",
+                      description="ここに載っていないコマンドが一部存在していますが、管理者専用のため使用することはできません。")
+
+        embed.set_author(name="機能系コマンド一覧")
+        embed.add_field(name="/suggestion",
+                value="```BOTに関する機能やネタコマンドの提案を行えます。※DM専用コマンドです。```",
+                inline=False)
+        embed.add_field(name="/help",
+                value="```コマンド一覧を表示します。```",
+                inline=False)
+        embed.add_field(name="/userinfo",
+                value="```IDで指定したユーザーのMCIDを表示します。```",
+                inline=False)
+        embed.add_field(name="/anonymous",
+                value="```匿名メッセージを送信します。```",
+                inline=False)
+        embed.add_field(name="/anonymous_im",
+                value="```匿名で画像を送信します。```",
+                inline=False)
+        embed.add_field(name="/embed",
+                value="```メッセージを埋め込みにします。```",
+                inline=False)
+        embed.add_field(name="/invite",
+                value="```このBOTの招待ができます。```",
+                inline=False)
+        embed.add_field(name="/servericon",
+                value="```サーバーのアイコンを取得します。```",
+                inline=False)
+        embed.add_field(name="/youtube",
+                value="```YouTubeから動画をダウンロードできます。```",
+                inline=False)
+        embed.add_field(name="/ping",
+                value="```このBOTのpingを確認できます。```",
+                inline=False)
+        embed.add_field(name="/online_check",
+                value="```マイクラサーバーのオンライン状態をチェックします。```",
+                inline=False)
+        embed.add_field(name="☆ほしいネタコマンド等があれば`/suggestion`でお願いします。",
+                value="",
+                inline=False)
+
+        await interaction.response.send_message(embed=embed,ephemeral=True)
+
+
+@bot.slash_command(name="help", description="コマンド一覧を表示します。") # Create a slash command
+@commands.cooldown(1, 30, commands.BucketType.user)
+async def help(ctx):
+    await ctx.respond("以下のボタンを押すことで指定したコマンド一覧を表示できます。", view=MyView(), ephemeral=True)
+
 bot.run(TOKEN)
