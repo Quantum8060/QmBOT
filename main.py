@@ -494,18 +494,20 @@ async def on_message(message):
     if "https://discord.com/channels/" in message.content:
         link = message.content.split("https://discord.com/channels/")[1]
         guild_id, channel_id, message_id = map(int, link.split("/"))
-        
+
         if message.guild.id != guild_id:
+
             return
+
         try:
             target_channel = bot.get_guild(guild_id).get_channel(channel_id)
             target_message = await target_channel.fetch_message(message_id)
 
-            content = target_message.content
             author = target_message.author
+            timestamp = target_message.created_at
             target_message_link = f"https://discord.com/channels/{guild_id}/{channel_id}/{message_id}"
 
-            embed = discord.Embed(description=content, color=0x00bfff, timestamp=target_message.created_at)
+            embed = discord.Embed(description=target_message.content, color=0x00bfff, timestamp=timestamp)
             embed.set_author(name=author.display_name, icon_url=author.avatar.url if author.avatar else author.default_avatar.url)
             embed.set_footer(text=f"From #{target_message.channel}")
 
@@ -513,6 +515,8 @@ async def on_message(message):
                 attachment = target_message.attachments[0]
                 if any(attachment.filename.lower().endswith(image_ext) for image_ext in ['png', 'jpg', 'jpeg', 'gif', 'webp']):
                     embed.set_image(url=attachment.url)
+
+            await message.channel.send(embed=embed)
 
             for original_embed in target_message.embeds:
                 await message.channel.send(embed=original_embed)
