@@ -593,7 +593,7 @@ class MyView(discord.ui.View): # Create a class called MyView that subclasses di
         embed.add_field(name="/online_check",
                 value="```マイクラサーバーのオンライン状態をチェックします。```",
                 inline=False)
-        embed.add_field(name="☆ほしいネタコマンド等があれば`/suggestion`でお願いします。",
+        embed.add_field(name="☆ほしい機能等があれば`/suggestion`でお願いします。",
                 value="",
                 inline=False)
 
