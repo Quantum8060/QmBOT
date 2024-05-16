@@ -10,12 +10,16 @@ from discord import webhook
 from time import sleep
 import aiohttp
 import json
+import configparser
+
 
 intents = discord.Intents.default()
 intents.message_content = (True)
 
-load_dotenv()
-TOKEN = os.getenv("TOKEN")
+config_ini = configparser.ConfigParser()
+config_ini.read("config.ini", encoding="utf-8")
+
+TOKEN = config_ini["MAIN"]["TOKEN"]
 
 bot = discord.Bot(intents=intents)
 bot.webhooks = {} # !create で作成したWebhookをおいておく場所
@@ -527,8 +531,8 @@ async def on_message(message):
 
 
 #help
-class MyView(discord.ui.View): # Create a class called MyView that subclasses discord.ui.View
-    @discord.ui.button(label="管理者用コマンド一覧", style=discord.ButtonStyle.green) # Create a button with the label "😎 Click me!" with color Blurple
+class helpView(discord.ui.View):
+    @discord.ui.button(label="管理者用コマンド一覧", style=discord.ButtonStyle.green)
     async def help1(self, button: discord.ui.Button, interaction):
         embed = discord.Embed(title="```管理者用コマンド一覧を表示しています。```",
                       description="ここに載っていないコマンドが一部存在していますが、BOT開発者専用のため使用することはできません。")
@@ -551,9 +555,9 @@ class MyView(discord.ui.View): # Create a class called MyView that subclasses di
                 value="",
                 inline=False)          
 
-        await interaction.response.send_message(embed=embed,ephemeral=True) # Send a message when the button is clicked
+        await interaction.response.send_message(embed=embed,ephemeral=True)
     
-    @discord.ui.button(label="機能系コマンド一覧", style=discord.ButtonStyle.primary) # Create a button with the label "😎 Click me!" with color Blurple
+    @discord.ui.button(label="機能系コマンド一覧", style=discord.ButtonStyle.primary)
     async def help2(self, button: discord.ui.Button, interaction):
 
         embed = discord.Embed(title="```機能系コマンド一覧を表示しています。```",
@@ -600,9 +604,11 @@ class MyView(discord.ui.View): # Create a class called MyView that subclasses di
         await interaction.response.send_message(embed=embed,ephemeral=True)
 
 
-@bot.slash_command(name="help", description="コマンド一覧を表示します。") # Create a slash command
+@bot.slash_command(name="help", description="コマンド一覧を表示します。")
 @commands.cooldown(1, 30, commands.BucketType.user)
 async def help(ctx):
-    await ctx.respond("以下のボタンを押すことで指定したコマンド一覧を表示できます。", view=MyView(), ephemeral=True)
+    await ctx.respond("以下のボタンを押すことで指定したコマンド一覧を表示できます。", view=helpView(), ephemeral=True)
+
+
 
 bot.run(TOKEN)
