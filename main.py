@@ -566,7 +566,10 @@ class helpView(discord.ui.View):
 
         embed.set_author(name="機能系コマンド一覧")
         embed.add_field(name="/suggestion",
-                value="```BOTに関する機能やネタコマンドの提案を行えます。※DM専用コマンドです。```",
+                value="```BOTに関する機能の提案や報告等を行えます。```",
+                inline=False)
+        embed.add_field(name="/suggestion_im",
+                value="```BOTに関する機能提案等の際に画像や動画の送信を行えます。```",
                 inline=False)
         embed.add_field(name="/help",
                 value="```コマンド一覧を表示します。```",
