@@ -1,6 +1,6 @@
 import discord
 import discord.ui
-from discord import Option
+from discord import option
 import os
 from discord.ext import commands
 from discord.ext.commands import MissingPermissions
@@ -266,6 +266,29 @@ async def suggestion(interaction: discord.ApplicationContext):
         modal = suggestionModal(title="BOT管理者に送信。")
         await interaction.send_modal(modal)
         await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+
+
+
+#suggestion image
+@bot.slash_command(name="suggestion_im", description="BOT管理者への報告等の際に画像や動画を送信できます。")
+@commands.cooldown(1, 10, commands.BucketType.user)
+async def suggestionIM(interaction: discord.ApplicationContext, picture: discord.Attachment):
+
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+        embed = discord.Embed(title="BOTに関する提案", color=0x4169e1)
+        embed.add_field(name="", value="")
+        embed.set_image(url=picture.url)
+        embed.set_footer(icon_url=interaction.user.avatar.url, text=interaction.user.id)
+        Quantum = await bot.fetch_user("822458692473323560")
+        await Quantum.send(embeds=[embed])
+        await interaction.response.send_message(f"以下のファイルを送信しました。\n管理者からBOTで返信が来る可能性がありますのでご了承ください。\n{picture.url}", ephemeral=True)
+        await interaction.user.dm_channel.send(f"以下のファイルを送信しました。\n管理者からBOTで返信が来る可能性がありますのでご了承ください。\n{picture.url}")
     else:
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
