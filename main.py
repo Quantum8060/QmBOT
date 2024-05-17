@@ -3,7 +3,6 @@ import discord.ui
 from discord import Option
 import os
 from discord.ext import commands
-from dotenv import load_dotenv
 from discord.ext.commands import MissingPermissions
 from yt_dlp import YoutubeDL
 from discord import webhook
@@ -11,6 +10,7 @@ from time import sleep
 import aiohttp
 import json
 import configparser
+import requests
 
 
 intents = discord.Intents.default()
@@ -214,7 +214,7 @@ class dmModal(discord.ui.Modal):
         await user.send(embeds=[embed])
         await interaction.response.send_message("送信しました。", ephemeral=True)
 
-@bot.slash_command(name="dm", description="指定したユーザーにDMを送ります。")
+@bot.slash_command(name="dm", description="指定したユーザーにDMを送ります。※あらかじめ送信するユーザーのIDを取得してください。")
 @commands.has_permissions(administrator = True)
 async def dm(interaction: discord.ApplicationContext):
     user_id = str(interaction.author.id)
@@ -235,26 +235,6 @@ async def adminerror(ctx, error):
     else:
         await ctx.respond("Something went wrong...", ephemeral=True) 
         raise error
-
-
-
-#minecraft server online checker
-@bot.slash_command(name="online_check", description="Minecraftのサーバーステータスを確認します。")
-@commands.cooldown(1, 30, commands.BucketType.user)
-async def mcsinfo(interaction: discord.ApplicationContext, server_address: discord.Option(str, required=True, description="返信内容を記入")):
-    user_id = str(interaction.author.id)
-
-    data = load_data()
-
-    if user_id not in data:
-        embed = discord.Embed(title=f"{server_address}のオンライン状況")
-        embed.add_field(name="", value="")
-        embed.set_image(url=f"https://api.mcstatus.io/v2/widget/java/{server_address}")
-        embed.set_author(name="Minecraftサーバーオンライン確認")
-
-        await interaction.respond(embed=embed, ephemeral=True)
-    else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 
@@ -534,8 +514,7 @@ async def on_message(message):
 class helpView(discord.ui.View):
     @discord.ui.button(label="管理者用コマンド一覧", style=discord.ButtonStyle.green)
     async def help1(self, button: discord.ui.Button, interaction):
-        embed = discord.Embed(title="```管理者用コマンド一覧を表示しています。```",
-                      description="ここに載っていないコマンドが一部存在していますが、BOT開発者専用のため使用することはできません。")
+        embed = discord.Embed(title="```管理者用コマンド一覧を表示しています。```", description="ここに載っていないコマンドが一部存在していますが、BOT開発者専用のため使用することはできません。")
 
         embed.set_author(name="管理者用コマンド一覧")
 
@@ -560,8 +539,7 @@ class helpView(discord.ui.View):
     @discord.ui.button(label="機能系コマンド一覧", style=discord.ButtonStyle.primary)
     async def help2(self, button: discord.ui.Button, interaction):
 
-        embed = discord.Embed(title="```機能系コマンド一覧を表示しています。```",
-                      description="ここに載っていないコマンドが一部存在していますが、管理者専用のため使用することはできません。")
+        embed = discord.Embed(title="```機能系コマンド一覧を表示しています。```", description="ここに載っていないコマンドが一部存在していますが、管理者専用のため使用することはできません。")
 
         embed.set_author(name="機能系コマンド一覧")
         embed.add_field(name="/suggestion",
@@ -594,8 +572,11 @@ class helpView(discord.ui.View):
         embed.add_field(name="/ping",
                 value="```このBOTのpingを確認できます。```",
                 inline=False)
-        embed.add_field(name="/online_check",
-                value="```マイクラサーバーのオンライン状態をチェックします。```",
+        embed.add_field(name="/mcstatus",
+                value="```マイクラサーバーのステータスをチェックします。```",
+                inline=False)
+        embed.add_field(name="",
+                value="",
                 inline=False)
         embed.add_field(name="☆ほしい機能等があれば`/suggestion`でお願いします。",
                 value="",
@@ -608,6 +589,33 @@ class helpView(discord.ui.View):
 @commands.cooldown(1, 30, commands.BucketType.user)
 async def help(ctx):
     await ctx.respond("以下のボタンを押すことで指定したコマンド一覧を表示できます。", view=helpView(), ephemeral=True)
+
+
+
+#Minecraft　server status
+@bot.slash_command(name='mcstatus', description="マイクラのサーバーステータスを確認します。")
+async def mcstatus(ctx, server_address):
+    url = f"https://api.mcstatus.io/v2/status/java/{server_address}"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        
+        if data['online']:
+            embed = discord.Embed(title="Minecraft Server Status", description=f"サーバーアドレス: {server_address}", color=discord.Color.green())
+            embed.add_field(name="オンライン", value="Yes", inline=True)
+            embed.add_field(name="ホスト", value=data['host'], inline=True)
+            embed.add_field(name="ポート", value=data['port'], inline=True)
+            embed.add_field(name="バージョン", value=data['version']['name_clean'], inline=True)
+            embed.add_field(name="プレイヤー数", value=f"{data['players']['online']} / {data['players']['max']}", inline=True)
+            embed.add_field(name="MOTD", value=data['motd']['clean'], inline=False)
+        else:
+            embed = discord.Embed(title="Minecraft Server Status", description=f"サーバーアドレス: {server_address}", color=discord.Color.red())
+            embed.add_field(name="オンライン", value="No", inline=True)
+        
+        await ctx.respond(embed=embed, ephemeral=True)
+    else:
+        await ctx.respond(f"サーバー情報の取得に失敗しました: HTTP {response.status_code}", ephemeral=True)
 
 
 
