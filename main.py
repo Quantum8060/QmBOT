@@ -650,4 +650,26 @@ async def mcstatus(ctx, server_address):
 
 
 
+#server info
+@bot.slash_command(name="serverinfo", description="サーバーの情報を表示します。")
+async def serverinfo(interaction: discord.Interaction):
+    user_id = str(interaction.author.id)
+
+    data = load_data()
+
+    if user_id not in data:
+        
+        embed = discord.Embed(title="サーバー情報", color=0x4169e1)
+        embed.set_author(name=f"{interaction.guild.name}")
+        embed.add_field(name="所有者", value=f"{interaction.guild.owner.mention}", inline=True)
+        embed.add_field(name="id", value=f"{interaction.guild.id}", inline=True)
+        embed.add_field(name="メンバー数", value=f"{interaction.guild.member_count}", inline=True)
+        embed.add_field(name="サーバー作成日", value=f"{interaction.guild.created_at}", inline=True)
+        embed.set_footer(text=f"{interaction.user.display_name}", icon_url=interaction.user.avatar.url)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+
+
+
 bot.run(TOKEN)
