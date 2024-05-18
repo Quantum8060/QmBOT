@@ -12,7 +12,6 @@ import json
 import configparser
 import requests
 from discord.ext import tasks
-import asyncio
 
 intents = discord.Intents.default()
 intents.message_content = (True)
@@ -558,6 +557,9 @@ class helpView(discord.ui.View):
         embed.add_field(name="/clear",
                 value="```指定した数のメッセージを削除します。```",
                 inline=False)
+        embed.add_field(name="",
+                value="",
+                inline=False)
         embed.add_field(name="☆ほしい機能等があれば`/suggestion`でお願いします。",
                 value="",
                 inline=False)          
@@ -605,6 +607,9 @@ class helpView(discord.ui.View):
                 inline=False)
         embed.add_field(name="/mcstatus",
                 value="```マイクラサーバーのステータスをチェックします。```",
+                inline=False)
+        embed.add_field(name="/serverinfo",
+                value="```Discordサーバーの情報を表示します。```",
                 inline=False)
         embed.add_field(name="",
                 value="",
