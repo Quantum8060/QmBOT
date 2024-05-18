@@ -12,14 +12,13 @@ import json
 import configparser
 import requests
 from discord.ext import tasks
-
+import asyncio
 
 intents = discord.Intents.default()
 intents.message_content = (True)
 
 config_ini = configparser.ConfigParser()
 config_ini.read("config.ini", encoding="utf-8")
-
 TOKEN = config_ini["MAIN"]["TOKEN"]
 
 bot = discord.Bot(intents=intents)
@@ -39,6 +38,7 @@ def save_data(data):
 #起動通知
 @bot.event
 async def on_ready():
+    s_loop.start()
     print(f"Bot名:{bot.user} On ready!!")
     print("------")
     channel = await bot.fetch_channel("1235247794114134037")
@@ -48,7 +48,7 @@ async def on_ready():
 @tasks.loop(hours=2)
 async def s_loop():
     count = len(bot.guilds)
-    await bot.change_presence(activity=discord.Game(name="New command test!|現在の参加サーバー数" + str(count), type=1))
+    await bot.change_presence(activity=discord.Game(name="現在の参加サーバー数" + str(count), type=1))
 
 
 
