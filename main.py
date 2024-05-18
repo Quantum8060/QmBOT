@@ -11,6 +11,7 @@ import aiohttp
 import json
 import configparser
 import requests
+from discord.ext import tasks
 
 
 intents = discord.Intents.default()
@@ -22,7 +23,7 @@ config_ini.read("config.ini", encoding="utf-8")
 TOKEN = config_ini["MAIN"]["TOKEN"]
 
 bot = discord.Bot(intents=intents)
-bot.webhooks = {} # !create で作成したWebhookをおいておく場所
+bot.webhooks = {}
 Debug_guild = [1235247721934360577]
 
 blacklist_file = 'blacklist.json'
@@ -31,7 +32,6 @@ def load_data():
     with open(blacklist_file, 'r') as file:
         return json.load(file)
 
-# データをJSONファイルに書き込む関数
 def save_data(data):
     with open(blacklist_file, 'w') as file:
         json.dump(data, file, indent=4)
@@ -42,8 +42,13 @@ async def on_ready():
     print(f"Bot名:{bot.user} On ready!!")
     print("------")
     channel = await bot.fetch_channel("1235247794114134037")
-
     await channel.send(f"{bot.user}BOT起動完了")
+
+#サーバー数表示
+@tasks.loop(hours=2)
+async def s_loop():
+    count = len(bot.guilds)
+    await bot.change_presence(activity=discord.Game(name="New command test!|現在の参加サーバー数" + str(count), type=1))
 
 
 
