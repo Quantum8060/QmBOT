@@ -234,7 +234,7 @@ async def dm(interaction: discord.ApplicationContext):
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 @dm.error
-async def adminerror(ctx, error):
+async def dmerror(ctx, error):
     if isinstance(error, MissingPermissions):
         await ctx.respond("あなたはこのコマンドを使用する権限を持っていません!", ephemeral=True)
     else:
