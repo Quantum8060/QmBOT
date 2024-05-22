@@ -97,28 +97,29 @@ async def clearerror(ctx, error):
 
 
 #userinfo
-@bot.slash_command(name="userinfo", description="ユーザー情報を取得します")
+@bot.slash_command(name="userinfo", description="ユーザー情報を取得します", guild_ids=Debug_guild)
 async def userinfo(interaction: discord.Interaction, user:discord.Member):
 
     user_id = str(interaction.author.id)
 
     data = load_data()
 
+    user = await bot.fetch_user(f"{user.id}")
+ 
     if user_id not in data:
-
-        user = await bot.fetch_user(f"{user.id}")
-
-        embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
+        try:
+            embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
+            embed.set_thumbnail(url=user.avatar.url)
+        except:
+            pass
         embed.add_field(name="表示名", value=user.display_name,inline=True)
         embed.add_field(name="ユーザーID", value=user.id,inline=True)
         embed.add_field(name="メンション", value=user.mention, inline=True)
         embed.add_field(name="アカウント作成日", value=user.created_at)
-        embed.add_field(name="アイコンURL", value=f"[アイコンのURLはこちら！]({user.avatar.url})")
         embed.set_footer(text="Userinfoサービス")
-        embed.set_thumbnail(url=user.avatar.url)
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.respond(embed=embed, ephemeral=True)
     else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+        await interaction.respond("あなたはブラックリストに登録されています。", ephemeral=True)
 
 @bot.user_command(name="userinfo")
 async def userinfo(interaction, user: discord.Member):
@@ -129,15 +130,16 @@ async def userinfo(interaction, user: discord.Member):
     user = await bot.fetch_user(f"{user.id}")
 
     if user_id not in data:
-
-        embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
+        try:
+            embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
+            embed.set_thumbnail(url=user.avatar.url)
+        except:
+            pass
         embed.add_field(name="表示名", value=user.display_name,inline=True)
         embed.add_field(name="ユーザーID", value=user.id,inline=True)
         embed.add_field(name="メンション", value=user.mention, inline=True)
         embed.add_field(name="アカウント作成日", value=user.created_at)
-        embed.add_field(name="アイコンURL", value=f"[アイコンのURLはこちら！]({user.avatar.url})")
         embed.set_footer(text="Userinfoサービス")
-        embed.set_thumbnail(url=user.avatar.url)
         await interaction.respond(embed=embed, ephemeral=True)
     else:
         await interaction.respond("あなたはブラックリストに登録されています。", ephemeral=True)
@@ -324,41 +326,26 @@ async def invite(interaction: discord.ApplicationContext):
 #anonymous chat
 @bot.slash_command(name="anonymous", description="匿名で送信します。")
 @commands.cooldown(1, 10, commands.BucketType.user)
-async def anonymous(interaction: discord.ApplicationContext, text: discord.Option(str, description="匿名メッセージを送信します。")):
+async def anonymous(interaction: discord.ApplicationContext, text: discord.Option(str, description="匿名メッセージを送信します。"), picture: discord.Attachment = None):
 
     user_id = str(interaction.author.id)
 
     data = load_data()
 
     if user_id not in data:
-        embed=discord.Embed()
-        embed.add_field(name="", value=f"{text}", inline=False)
+        if text and picture:
+            embed=discord.Embed()
+            embed.add_field(name="", value=f"{text}", inline=False)
+            embed.set_image(url=picture.url)
 
-        await interaction.respond("匿名メッセージを送信しました。", ephemeral=True)
-        await interaction.channel.send(embed=embed)
-    else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+            await interaction.respond("匿名メッセージを送信しました。", ephemeral=True)
+            await interaction.channel.send(embed=embed)
+        elif text: 
+            embed=discord.Embed()
+            embed.add_field(name="", value=f"{text}", inline=False)
 
-   
-
-#anonymous image
-@bot.slash_command(name="anonymous_im", description="匿名で送信します。")
-@commands.cooldown(1, 10, commands.BucketType.user)
-async def anonymousIM(interaction: discord.ApplicationContext, picture: discord.Attachment):
-
-    user_id = str(interaction.author.id)
-
-    data = load_data()
-
-    if user_id not in data:
-        embed=discord.Embed()
-        embed.set_image(url=picture.url)
-        embed.add_field(name="", value="")
-        embed.set_footer(text="匿名画像")
-   
-
-        await interaction.respond("匿名画像メッセージを送信しました。", ephemeral=True)
-        await interaction.channel.send(embed=embed)
+            await interaction.respond("匿名メッセージを送信しました。", ephemeral=True)
+            await interaction.channel.send(embed=embed)
     else:
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
@@ -586,9 +573,6 @@ class helpView(discord.ui.View):
                 inline=False)
         embed.add_field(name="/anonymous",
                 value="```匿名メッセージを送信します。```",
-                inline=False)
-        embed.add_field(name="/anonymous_im",
-                value="```匿名で画像を送信します。```",
                 inline=False)
         embed.add_field(name="/embed",
                 value="```メッセージを埋め込みにします。```",
