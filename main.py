@@ -97,7 +97,7 @@ async def clearerror(ctx, error):
 
 
 #userinfo
-@bot.slash_command(name="userinfo", description="ユーザー情報を取得します", guild_ids=Debug_guild)
+@bot.slash_command(name="userinfo", description="ユーザー情報を取得します")
 async def userinfo(interaction: discord.Interaction, user:discord.Member):
 
     user_id = str(interaction.author.id)
@@ -314,7 +314,6 @@ async def invite(interaction: discord.ApplicationContext):
 
         embed=discord.Embed(title="QmBOT招待", description="BOTを招待する場合は下のボタンを押してください。", color=0x4169e1)
         embed.add_field(name="", value="")
-        embed.set_footer(text="This BOT developer -> @7984_at")
         view = discord.ui.View()
         view.add_item(button)
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
@@ -667,6 +666,20 @@ async def serverinfo(interaction: discord.Interaction):
     else:
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
+
+
+#support server
+@bot.slash_command(name="support", description="サポートサーバーへのリンクを表示します。※ブラックリストの異議申し立てはサポートサーバーで行えます。")
+@commands.cooldown(1, 30, commands.BucketType.user)
+async def support(interaction: discord.ApplicationContext):
+    button = discord.ui.Button(label="Join!", style=discord.ButtonStyle.primary, url="https://discord.gg/Ch4XZdSqPK")
+
+    embed=discord.Embed(title="Join support server!", description="サポートサーバーに参加する場合は下のボタンを押してください。", color=0x4169e1)
+    embed.add_field(name="※ブラックリストの異議申し立てに関して", value="異議申し立てはサポートサーバーで行ってください。\nその際、ブラックリストに追加したユーザーにも聴取を行うためユーザーIDを取得してきてください。")
+    view = discord.ui.View()
+    view.add_item(button)
+    await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+    
 
 
 bot.run(TOKEN)
