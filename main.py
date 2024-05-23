@@ -181,34 +181,6 @@ async def suggestionIM(interaction: discord.ApplicationContext, picture: discord
 
 
 
-#anonymous chat
-@bot.slash_command(name="anonymous", description="匿名で送信します。")
-@commands.cooldown(1, 10, commands.BucketType.user)
-async def anonymous(interaction: discord.ApplicationContext, text: discord.Option(str, description="匿名メッセージを送信します。"), picture: discord.Attachment = None):
-
-    user_id = str(interaction.author.id)
-
-    data = load_data()
-
-    if user_id not in data:
-        if text and picture:
-            embed=discord.Embed()
-            embed.add_field(name="", value=f"{text}", inline=False)
-            embed.set_image(url=picture.url)
-
-            await interaction.respond("匿名メッセージを送信しました。", ephemeral=True)
-            await interaction.channel.send(embed=embed)
-        elif text: 
-            embed=discord.Embed()
-            embed.add_field(name="", value=f"{text}", inline=False)
-
-            await interaction.respond("匿名メッセージを送信しました。", ephemeral=True)
-            await interaction.channel.send(embed=embed)
-    else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
-
-
-
 #Embed webhook
 class EmbedModal(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
@@ -226,7 +198,7 @@ class EmbedModal(discord.ui.Modal):
             webhook = await interaction.channel.create_webhook(name=f"{interaction.user.display_name}")
 
         await webhook.send(embed=embed)
-        await interaction.response.send_message("送信しました。\n※エラー防止用のメッセージです。", ephemeral=True)
+        await interaction.response.send_message("送信しました。", ephemeral=True)
         await webhook.delete()
 
 @bot.slash_command(name="embed", description="メッセージを埋め込みにして送信します。")
@@ -392,7 +364,8 @@ cogs_list = [
     'support',
     'serverinfo',
     'mcstatus',
-    'servericon'
+    'servericon',
+    'anonymous'
 ]
 
 for cog in cogs_list:
