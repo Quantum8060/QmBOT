@@ -1,7 +1,5 @@
 import discord
-from discord import option
 from discord.ext import commands
-from discord.ext.commands import MissingPermissions
 
 Debug_guild = [1235247721934360577]
 

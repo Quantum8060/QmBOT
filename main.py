@@ -52,56 +52,6 @@ async def s_loop():
 
 
 
-#userinfo
-@bot.slash_command(name="userinfo", description="ユーザー情報を取得します")
-async def userinfo(interaction: discord.Interaction, user:discord.Member):
-
-    user_id = str(interaction.author.id)
-
-    data = load_data()
-
-    user = await bot.fetch_user(f"{user.id}")
- 
-    if user_id not in data:
-        try:
-            embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
-            embed.set_thumbnail(url=user.avatar.url)
-        except:
-            pass
-        embed.add_field(name="表示名", value=user.display_name,inline=True)
-        embed.add_field(name="ユーザーID", value=user.id,inline=True)
-        embed.add_field(name="メンション", value=user.mention, inline=True)
-        embed.add_field(name="アカウント作成日", value=user.created_at)
-        embed.set_footer(text="Userinfoサービス")
-        await interaction.respond(embed=embed, ephemeral=True)
-    else:
-        await interaction.respond("あなたはブラックリストに登録されています。", ephemeral=True)
-
-@bot.user_command(name="userinfo")
-async def userinfo(interaction, user: discord.Member):
-    user_id = str(interaction.author.id)
-
-    data = load_data()
-    
-    user = await bot.fetch_user(f"{user.id}")
-
-    if user_id not in data:
-        try:
-            embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
-            embed.set_thumbnail(url=user.avatar.url)
-        except:
-            pass
-        embed.add_field(name="表示名", value=user.display_name,inline=True)
-        embed.add_field(name="ユーザーID", value=user.id,inline=True)
-        embed.add_field(name="メンション", value=user.mention, inline=True)
-        embed.add_field(name="アカウント作成日", value=user.created_at)
-        embed.set_footer(text="Userinfoサービス")
-        await interaction.respond(embed=embed, ephemeral=True)
-    else:
-        await interaction.respond("あなたはブラックリストに登録されています。", ephemeral=True)
-
-
-
 #get server icon
 @bot.slash_command(name="servericon", description="サーバーのアイコンを取得します。")
 async def servericon(interaction: discord.Interaction):
@@ -553,7 +503,8 @@ async def support(interaction: discord.ApplicationContext):
 cogs_list = [
     'help',
     'clear',
-    'ping'
+    'ping',
+    'userinfo'
 ]
 
 for cog in cogs_list:

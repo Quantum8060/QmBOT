@@ -1,5 +1,4 @@
 import discord
-from discord import option
 from discord.ext import commands
 
 Debug_guild = [1235247721934360577]
