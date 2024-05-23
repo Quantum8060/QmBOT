@@ -52,22 +52,6 @@ async def s_loop():
 
 
 
-#ping
-@bot.slash_command(name="ping", description="BotのPingを確認します。")
-async def ping(interaction: discord.Interaction):
-
-    user_id = str(interaction.author.id)
-
-    data = load_data()
-
-    if user_id not in data:
-        embed = discord.Embed(title="Ping", description="`{0}ms`".format(round(bot.latency * 1000, 2)))
-        await interaction.response.send_message(embed=embed)
-    else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
-
-
-
 #userinfo
 @bot.slash_command(name="userinfo", description="ユーザー情報を取得します")
 async def userinfo(interaction: discord.Interaction, user:discord.Member):
@@ -568,7 +552,8 @@ async def support(interaction: discord.ApplicationContext):
 
 cogs_list = [
     'help',
-    'clear'
+    'clear',
+    'ping'
 ]
 
 for cog in cogs_list:

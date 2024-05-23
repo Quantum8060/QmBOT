@@ -2,7 +2,6 @@ import discord
 from discord import option
 from discord.ext import commands
 from discord.ext.commands import MissingPermissions
-import discord.ui
 
 Debug_guild = [1235247721934360577]
 
@@ -22,5 +21,5 @@ class clear(commands.Cog):
         embed.add_field(name="", value="")
         await interaction.respond(embeds=[embed], ephemeral=True)
         
-def setup(bot): # this is called by Pycord to setup the cog
-    bot.add_cog(clear(bot)) # add the cog to the bot
+def setup(bot):
+    bot.add_cog(clear(bot))
