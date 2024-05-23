@@ -418,6 +418,7 @@ async def stop_recording(ctx:discord.ApplicationContext):
     await ctx.voice_client.disconnect()
 '''
 
+
 blacklist_file = 'blacklist.json'
 
 def load_data():
@@ -593,6 +594,9 @@ class helpView(discord.ui.View):
                 inline=False)
         embed.add_field(name="/serverinfo",
                 value="```Discordサーバーの情報を表示します。```",
+                inline=False)
+        embed.add_field(name="/support",
+                value="```サポートサーバーへのリンクを表示します。```",
                 inline=False)
         embed.add_field(name="",
                 value="",
