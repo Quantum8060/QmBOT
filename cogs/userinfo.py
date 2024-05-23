@@ -8,7 +8,7 @@ class userinfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="userinfo", description="ユーザー情報を取得します。", guild_ids=Debug_guild)
+    @discord.slash_command(name="userinfo", description="ユーザー情報を取得します。")
     async def userinfo(self, ctx, user:discord.Member):
         try:
             embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
@@ -27,7 +27,7 @@ class userinfo_c(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.user_command(name="userinfo", guild_ids=Debug_guild)
+    @discord.user_command(name="userinfo")
     async def userinfo_c(self, ctx, user: discord.Member):
     
         try:
