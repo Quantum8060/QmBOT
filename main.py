@@ -13,6 +13,7 @@ import configparser
 import requests
 from discord.ext import tasks
 
+
 intents = discord.Intents.default()
 intents.message_content = (True)
 
@@ -64,35 +65,6 @@ async def ping(interaction: discord.Interaction):
         await interaction.response.send_message(embed=embed)
     else:
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
-
-
-
-#clear
-@bot.slash_command(name="clear", description="指定された数のメッセージを削除します。")
-@commands.has_permissions(administrator = True)
-async def clear(interaction: discord.ApplicationContext, num: discord.Option(str, required=True, description="削除するメッセージ数を入力")):
-    user_id = str(interaction.author.id)
-
-    data = load_data()
-
-    if user_id not in data:
-
-        async for message in interaction.channel.history(limit=int(num)):
-            await message.delete(delay=1.2)
-    
-        embed=discord.Embed(title="メッセージ削除", description=f"{num}メッセージを削除しました。", color=0x4169e1)
-        embed.add_field(name="", value="")
-        await interaction.respond(embeds=[embed], ephemeral=True)
-    else:
-        await interaction.response("あなたはブラックリストに登録されています。", ephemeral=True)
-
-@clear.error
-async def clearerror(ctx, error):
-    if isinstance(error, MissingPermissions):
-        await ctx.respond("あなたはこのコマンドを使用する権限を持っていません!", ephemeral=True)
-    else:
-        await ctx.respond("Something went wrong...", ephemeral=True) 
-        raise error
 
 
 
@@ -172,7 +144,7 @@ async def servericon(interaction: discord.Interaction):
 
 #DL youtube
 @bot.slash_command(name="youtube", description="YouTube動画のダウンロードリンクを取得します", )
-async def ytdl(interaction: discord.Interaction, url:discord.Option(str, required=True, description="ダウンロードしたい動画のURLを入力") ):
+async def ytdl(interaction: discord.Interaction, url:discord.Option(str, required=True, description="ダウンロードしたい動画のURLを入力")):
 
     user_id = str(interaction.author.id)
 
@@ -524,97 +496,6 @@ async def on_message(message):
 
 
 
-#help
-class helpView(discord.ui.View):
-    @discord.ui.button(label="管理者用コマンド一覧", style=discord.ButtonStyle.green)
-    async def help1(self, button: discord.ui.Button, interaction):
-        embed = discord.Embed(title="```管理者用コマンド一覧を表示しています。```", description="ここに載っていないコマンドが一部存在していますが、BOT開発者専用のため使用することはできません。")
-
-        embed.set_author(name="管理者用コマンド一覧")
-
-        embed.add_field(name="/add_blacklist",
-                value="```ブラックリストにユーザーを登録します。```",
-                inline=False)
-        embed.add_field(name="/show_blacklist",
-                value="```ブラックリストを表示します。```",
-                inline=False)
-        embed.add_field(name="/dm",
-                value="指定したユーザーにDMを送信します。",
-                inline=False)
-        embed.add_field(name="/clear",
-                value="```指定した数のメッセージを削除します。```",
-                inline=False)
-        embed.add_field(name="",
-                value="",
-                inline=False)
-        embed.add_field(name="☆ほしい機能等があれば`/suggestion`でお願いします。",
-                value="",
-                inline=False)          
-
-        await interaction.response.send_message(embed=embed,ephemeral=True)
-    
-    @discord.ui.button(label="機能系コマンド一覧", style=discord.ButtonStyle.primary)
-    async def help2(self, button: discord.ui.Button, interaction):
-
-        embed = discord.Embed(title="```機能系コマンド一覧を表示しています。```", description="ここに載っていないコマンドが一部存在していますが、管理者専用のため使用することはできません。")
-
-        embed.set_author(name="機能系コマンド一覧")
-        embed.add_field(name="/suggestion",
-                value="```BOTに関する機能の提案や報告等を行えます。```",
-                inline=False)
-        embed.add_field(name="/suggestion_im",
-                value="```BOTに関する機能提案等の際に画像や動画の送信を行えます。```",
-                inline=False)
-        embed.add_field(name="/help",
-                value="```コマンド一覧を表示します。```",
-                inline=False)
-        embed.add_field(name="/userinfo",
-                value="```IDで指定したユーザーのMCIDを表示します。```",
-                inline=False)
-        embed.add_field(name="/anonymous",
-                value="```匿名メッセージを送信します。```",
-                inline=False)
-        embed.add_field(name="/embed",
-                value="```メッセージを埋め込みにします。```",
-                inline=False)
-        embed.add_field(name="/invite",
-                value="```このBOTの招待ができます。```",
-                inline=False)
-        embed.add_field(name="/servericon",
-                value="```サーバーのアイコンを取得します。```",
-                inline=False)
-        embed.add_field(name="/youtube",
-                value="```YouTubeから動画をダウンロードできます。```",
-                inline=False)
-        embed.add_field(name="/ping",
-                value="```このBOTのpingを確認できます。```",
-                inline=False)
-        embed.add_field(name="/mcstatus",
-                value="```マイクラサーバーのステータスをチェックします。```",
-                inline=False)
-        embed.add_field(name="/serverinfo",
-                value="```Discordサーバーの情報を表示します。```",
-                inline=False)
-        embed.add_field(name="/support",
-                value="```サポートサーバーへのリンクを表示します。```",
-                inline=False)
-        embed.add_field(name="",
-                value="",
-                inline=False)
-        embed.add_field(name="☆ほしい機能等があれば`/suggestion`でお願いします。",
-                value="",
-                inline=False)
-
-        await interaction.response.send_message(embed=embed,ephemeral=True)
-
-
-@bot.slash_command(name="help", description="コマンド一覧を表示します。")
-@commands.cooldown(1, 30, commands.BucketType.user)
-async def help(ctx):
-    await ctx.respond("以下のボタンを押すことで指定したコマンド一覧を表示できます。", view=helpView(), ephemeral=True)
-
-
-
 #Minecraft　server status
 @bot.slash_command(name='mcstatus', description="マイクラのサーバーステータスを確認します。")
 async def mcstatus(ctx, server_address):
@@ -684,6 +565,14 @@ async def support(interaction: discord.ApplicationContext):
     view.add_item(button)
     await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
     
+
+cogs_list = [
+    'help',
+    'clear'
+]
+
+for cog in cogs_list:
+    bot.load_extension(f'cogs.{cog}')
 
 
 bot.run(TOKEN)
