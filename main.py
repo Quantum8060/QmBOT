@@ -539,7 +539,7 @@ class helpView(discord.ui.View):
                 value="```ブラックリストを表示します。```",
                 inline=False)
         embed.add_field(name="/dm",
-                value="指定したユーザーにDMを送信します。",
+                value="```指定したユーザーにDMを送信します。```",
                 inline=False)
         embed.add_field(name="/clear",
                 value="```指定した数のメッセージを削除します。```",
