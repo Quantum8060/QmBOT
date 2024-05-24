@@ -150,41 +150,6 @@ async def suggestionIM(interaction: discord.ApplicationContext, picture: discord
 
 
 
-#Embed webhook
-class EmbedModal(discord.ui.Modal):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        self.add_item(discord.ui.InputText(label="埋め込むメッセージを入力してください。", style=discord.InputTextStyle.long))
-
-
-    async def callback(self, interaction: discord.Interaction):
-
-        embed = discord.Embed(title=self.children[0].value, color=0x4169e1)
-        embed.add_field(name="", value="")
-        
-        async with aiohttp.ClientSession() as session:
-            webhook = await interaction.channel.create_webhook(name=f"{interaction.user.display_name}")
-
-        await webhook.send(embed=embed)
-        await interaction.response.send_message("送信しました。", ephemeral=True)
-        await webhook.delete()
-
-@bot.slash_command(name="embed", description="メッセージを埋め込みにして送信します。")
-async def webhookembed(interaction: discord.ApplicationContext):
-
-    user_id = str(interaction.author.id)
-
-    data = load_data()
-
-    if user_id not in data:
-        modal = EmbedModal(title="Embedコマンド")
-        await interaction.send_modal(modal)
-        await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
-    else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
-
-
 '''
 @bot.slash_command(name="r_start", description="VCの録音を開始します。")
 async def start_record(ctx:discord.ApplicationContext):
@@ -335,7 +300,8 @@ cogs_list = [
     'mcstatus',
     'servericon',
     'anonymous',
-    'youtube'
+    'youtube',
+    'embed'
 ]
 
 for cog in cogs_list:
