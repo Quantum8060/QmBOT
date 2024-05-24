@@ -29,7 +29,7 @@ class userinfo_c(commands.Cog):
 
     @discord.user_command(name="userinfo")
     async def userinfo_c(self, ctx, user: discord.Member):
-    
+
         try:
             embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
             embed.set_thumbnail(url=user.avatar.url)

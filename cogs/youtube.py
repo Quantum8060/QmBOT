@@ -13,7 +13,7 @@ class youtube(commands.Cog):
     async def youtube(self, interaction: discord.ApplicationContext, url:discord.Option(str, required=True, description="ダウンロードしたい動画のURLを入力")):
 
         await interaction.response.defer()
-  
+
         youtube_dl_opts = {'format' : 'best'}
 
         try:

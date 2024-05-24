@@ -19,7 +19,7 @@ class anonymous(commands.Cog):
 
             await interaction.respond("匿名メッセージを送信しました。", ephemeral=True)
             await interaction.channel.send(embed=embed)
-        elif text: 
+        elif text:
             embed=discord.Embed()
             embed.add_field(name="", value=f"{text}", inline=False)
 

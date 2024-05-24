@@ -17,7 +17,7 @@ class EmbedModal(discord.ui.Modal):
 
         embed = discord.Embed(title=self.children[0].value, color=0x4169e1)
         embed.add_field(name="", value="")
-        
+
         async with aiohttp.ClientSession() as session:
             webhook = await interaction.channel.create_webhook(name=f"{interaction.user.display_name}")
 
@@ -33,11 +33,10 @@ class embed(commands.Cog):
 
     @discord.slash_command(name="embed", description="メッセージを埋め込みにして送信します。")
     async def webhookembed(self, interaction: discord.ApplicationContext):
-        
+
         modal = EmbedModal(title="Embedコマンド")
         await interaction.send_modal(modal)
         await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
 
 def setup(bot):
     bot.add_cog(embed(bot))
-

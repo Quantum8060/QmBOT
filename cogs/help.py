@@ -32,9 +32,9 @@ class helpView(discord.ui.View):
                     inline=False)
             embed.add_field(name="☆ほしい機能等があれば`/suggestion`でお願いします。",
                     value="",
-                    inline=False)          
+                    inline=False)
             await interaction.response.send_message(embed=embed,ephemeral=True)
-    
+
         @discord.ui.button(label="機能系コマンド一覧", style=discord.ButtonStyle.primary)
         async def help2(self, button: discord.ui.Button, interaction):
 

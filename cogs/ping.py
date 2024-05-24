@@ -13,7 +13,6 @@ class ping(commands.Cog):
 
         embed = discord.Embed(title="Ping", description="`{0}ms`".format(round(self.bot.latency * 1000, 2)))
         await ctx.response.send_message(embed=embed)
-    
-        
+
 def setup(bot):
     bot.add_cog(ping(bot))

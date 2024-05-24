@@ -10,7 +10,7 @@ class serverinfo(commands.Cog):
 
     @discord.slash_command(name="serverinfo", description="サーバーの情報を表示します。")
     async def serverinfo(self, interaction: discord.ApplicationContext):
-    
+
         embed = discord.Embed(title="サーバー情報", color=0x4169e1)
         embed.set_author(name=f"{interaction.guild.name}")
         embed.add_field(name="所有者", value=f"{interaction.guild.owner.mention}", inline=False)

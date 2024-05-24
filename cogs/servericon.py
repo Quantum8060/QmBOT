@@ -10,7 +10,7 @@ class servericon(commands.Cog):
 
     @discord.slash_command(name='servericon', description="サーバーのアイコンを取得します。")
     async def servericon(self, interaction: discord.ApplicationContext):
-    
+
         try:
             guildicon = interaction.guild.icon.replace(static_format='png')
         except:

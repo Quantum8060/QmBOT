@@ -4,8 +4,6 @@ from discord import option
 import os
 from discord.ext import commands
 from discord.ext.commands import MissingPermissions
-from yt_dlp import YoutubeDL
-from discord import webhook
 from time import sleep
 import aiohttp
 import json
@@ -48,49 +46,6 @@ async def on_ready():
 async def s_loop():
     count = len(bot.guilds)
     await bot.change_presence(activity=discord.Game(name="現在の参加サーバー数" + str(count), type=1))
-
-
-
-#DM
-class dmModal(discord.ui.Modal):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        self.add_item(discord.ui.InputText(label="タイトルを入力してください。", style=discord.InputTextStyle.short))
-        self.add_item(discord.ui.InputText(label="送信内容を入力してください。", style=discord.InputTextStyle.long))
-        self.add_item(discord.ui.InputText(label="送信先のユーザーのIDを入力してください。", style=discord.InputTextStyle.short))
-
-    async def callback(self, interaction: discord.Interaction):
-
-
-        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=0x9b59b6)
-        embed.add_field(name="", value="")
-        embed.set_footer(icon_url=interaction.user.avatar.url, text=f"{interaction.user.name}")
-        user = await bot.fetch_user(f"{self.children[2].value}")
-        await user.send(embeds=[embed])
-        await interaction.response.send_message("送信しました。", ephemeral=True)
-
-@bot.slash_command(name="dm", description="指定したユーザーにDMを送ります。※あらかじめ送信するユーザーのIDを取得してください。")
-@commands.has_permissions(administrator = True)
-async def dm(interaction: discord.ApplicationContext):
-    user_id = str(interaction.author.id)
-
-    data = load_data()
-
-    if user_id not in data:
-        modal = dmModal(title="DM送信用フォーム")
-        await interaction.send_modal(modal)
-        await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
-    else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
-
-@dm.error
-async def dmerror(ctx, error):
-    if isinstance(error, MissingPermissions):
-        await ctx.respond("あなたはこのコマンドを使用する権限を持っていません!", ephemeral=True)
-    else:
-        await ctx.respond("Something went wrong...", ephemeral=True) 
-        raise error
 
 
 
@@ -160,7 +115,7 @@ async def start_record(ctx:discord.ApplicationContext):
     except AttributeError:
        await ctx.respond("ボイスチャンネルに入ってください。")
        return
-        
+
     # 録音開始。mp3で帰ってくる。wavだとなぜか壊れる。
     ctx.voice_client.start_recording(discord.sinks.MP3Sink(), finished_callback, ctx)
 
@@ -206,7 +161,7 @@ async def a_blacklist(interaction: discord.Interaction, user: discord.Member, re
     if b_id not in data:
 
         user_id = await bot.fetch_user(f"{user.id}")
-    
+
         data = load_data()
 
         if user_id not in data:
@@ -241,10 +196,10 @@ async def s_blacklist(interaction: discord.ApplicationContext):
         data = load_data()
 
         embed = discord.Embed(title="ブラックリストユーザー一覧")
-    
+
         user_info = "\n".join([f"<@!{key}> : {value}" for key, value in data.items()])
         embed.add_field(name="ブラックリストユーザーの一覧です。", value=user_info, inline=False)
-    
+
         await interaction.response.send_message(embed=embed, ephemeral=True)
     else:
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
@@ -287,7 +242,7 @@ async def on_message(message):
         except Exception as e:
             print(f"エラーらしい: {e}")
 
-    
+
 
 cogs_list = [
     'help',
@@ -301,7 +256,8 @@ cogs_list = [
     'servericon',
     'anonymous',
     'youtube',
-    'embed'
+    'embed',
+    'dm'
 ]
 
 for cog in cogs_list:

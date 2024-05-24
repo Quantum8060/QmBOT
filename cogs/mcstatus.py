@@ -11,13 +11,13 @@ class mcstatus(commands.Cog):
 
     @discord.slash_command(name='mcstatus', description="マイクラのサーバーステータスを確認します。")
     async def mcstatus(self, ctx, server_address):
-    
+
         url = f"https://api.mcstatus.io/v2/status/java/{server_address}"
         response = requests.get(url)
 
         if response.status_code == 200:
             data = response.json()
-        
+
             if data['online']:
                 embed = discord.Embed(title="Minecraft Server Status", description=f"サーバーアドレス: {server_address}", color=discord.Color.green())
                 embed.add_field(name="オンライン", value="Yes", inline=True)
@@ -29,7 +29,7 @@ class mcstatus(commands.Cog):
             else:
                 embed = discord.Embed(title="Minecraft Server Status", description=f"サーバーアドレス: {server_address}", color=discord.Color.red())
                 embed.add_field(name="オンライン", value="No", inline=True)
-        
+
             await ctx.respond(embed=embed, ephemeral=True)
         else:
             await ctx.respond(f"サーバー情報の取得に失敗しました: HTTP {response.status_code}", ephemeral=True)
