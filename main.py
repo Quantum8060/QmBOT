@@ -118,6 +118,14 @@ async def a_blacklist(interaction: discord.Interaction, user: discord.Member, re
     else:
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
+@a_blacklist.error
+async def a_blacklisterror(ctx, error):
+        if isinstance(error, MissingPermissions):
+            await ctx.respond("あなたはこのコマンドを使用する権限を持っていません!", ephemeral=True)
+        else:
+            await ctx.respond("Something went wrong...", ephemeral=True)
+        raise error
+
 
 
 #show blacklist
