@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import discord.ui
-from discord.ext.commands import MissingPermissions
+from discord.ext.commands import NotOwner
 
 
 
@@ -32,20 +32,19 @@ class dm(commands.Cog):
 
     @discord.slash_command(name="dm", description="メッセージを埋め込みにして送信します。")
     @commands.is_owner()
-    async def dm(interaction: discord.ApplicationContext):
+    async def dm(self, interaction: discord.ApplicationContext):
 
         modal = dmModal(title="DM送信用フォーム")
         await interaction.send_modal(modal)
         await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
 
     @dm.error
-    async def dmerror(ctx, error):
-        if isinstance(error, MissingPermissions):
+    async def dmerror(self, ctx, error):
+        if isinstance(error, NotOwner):
             await ctx.respond("あなたはこのコマンドを使用する権限を持っていません!", ephemeral=True)
         else:
-            await ctx.respond("Something went wrong...", ephemeral=True) 
+            await ctx.respond("Something went wrong...", ephemeral=True)
             raise error
-
 
 def setup(bot):
     bot.add_cog(dm(bot))
