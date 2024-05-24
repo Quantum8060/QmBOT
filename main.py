@@ -2,6 +2,8 @@ import discord
 import discord.ui
 from discord import option
 import os
+import sys
+import datetime
 from discord.ext import commands
 from discord.ext.commands import MissingPermissions
 from time import sleep
@@ -196,7 +198,6 @@ async def on_message(message):
 
 
 
-
 #suggestion
 class suggestionModal(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
@@ -250,6 +251,21 @@ async def suggestionIM(interaction: discord.ApplicationContext, picture: discord
         await interaction.user.dm_channel.send(f"以下のファイルを送信しました。\n管理者からBOTで返信が来る可能性がありますのでご了承ください。\n{picture.url}")
     else:
         await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+
+
+
+#stop
+def stop_py():
+    if (bot.is_closed()):
+        print("osを切ります。")
+        os.system("kill 1")
+
+@bot.slash_command(name="stop", description="BOTを停止します。")
+@commands.is_owner()
+async def stop(ctx):
+    await ctx.respond("BOTを停止します。", ephemeral=True)
+    print("BOTを停止しました。\n------")
+    await bot.close()
 
 
 
