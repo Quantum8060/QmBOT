@@ -269,6 +269,7 @@ async def stop(ctx):
 
 
 
+#cogs登録
 cogs_list = [
     'help',
     'clear',
