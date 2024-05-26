@@ -283,7 +283,10 @@ cogs_list = [
     'anonymous',
     'youtube',
     'embed',
-    'dm'
+    'dm',
+    'ban',
+    'kick',
+    'timeout'
 ]
 
 for cog in cogs_list:
