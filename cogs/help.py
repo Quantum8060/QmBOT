@@ -27,6 +27,15 @@ class helpView(discord.ui.View):
             embed.add_field(name="/clear",
                     value="```指定した数のメッセージを削除します。```",
                     inline=False)
+            embed.add_field(name="/create_text",
+                    value="```テキストチャンネルを作成します。```",
+                    inline=False)
+            embed.add_field(name="/create_voice",
+                    value="```ボイスチャンネルを作成します。```",
+                    inline=False)
+            embed.add_field(name="/delete",
+                    value="```コマンドを実行したチャンネルを削除します。```",
+                    inline=False)
             embed.add_field(name="",
                     value="",
                     inline=False)

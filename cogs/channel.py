@@ -33,7 +33,7 @@ class d_channel(commands.Cog):
 
     @discord.slash_command(name="delete", description="チャンネルを削除します。", guild_ids=Debug_guild)
     async def d_channel(self, interaction: discord.ApplicationContext):
-        await interaction.response.send_message("チャンネルを削除します。", ephemeral=True)
+        await interaction.response.send_message("チャンネルを削除します。しばらくお待ちください。", ephemeral=True)
         await sleep(10)
         await interaction.channel.delete()
 
