@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import Option
 from discord.ext.commands import MissingPermissions
+from asyncio import sleep
 
 Debug_guild = [1235247721934360577]
 
@@ -25,8 +26,18 @@ class v_channel(commands.Cog):
         await interaction.guild.create_voice_channel(name=name, category=category)
         await interaction.response.send_message(f"{name}を作成しました。", ephemeral=True)
 
+class d_channel(commands.Cog):
 
+    def __init__(self, bot):
+        self.bot = bot
+
+    @discord.slash_command(name="delete", description="チャンネルを削除します。", guild_ids=Debug_guild)
+    async def d_channel(self, interaction: discord.ApplicationContext):
+        await interaction.response.send_message("チャンネルを削除します。", ephemeral=True)
+        await sleep(10)
+        await interaction.channel.delete()
 
 def setup(bot):
     bot.add_cog(t_channel(bot))
     bot.add_cog(v_channel(bot))
+    bot.add_cog(d_channel(bot))
