@@ -1,0 +1,32 @@
+import discord
+from discord.ext import commands
+from discord import Option
+from discord.ext.commands import MissingPermissions
+
+Debug_guild = [1235247721934360577]
+
+class t_channel(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    @discord.slash_command(name="create_text", description="テキストチャンネルを作成します。", guild_ids=Debug_guild)
+    async def t_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
+        await interaction.guild.create_text_channel(name=name, category=category)
+        await interaction.response.send_message(f"{name}を作成しました", ephemeral=True)
+
+class v_channel(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    @discord.slash_command(name="create_voice", description="ボイスチャンネルを作成します。", guild_ids=Debug_guild)
+    async def v_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
+        await interaction.guild.create_voice_channel(name=name, category=category)
+        await interaction.response.send_message(f"{name}を作成しました。", ephemeral=True)
+
+
+
+def setup(bot):
+    bot.add_cog(t_channel(bot))
+    bot.add_cog(v_channel(bot))

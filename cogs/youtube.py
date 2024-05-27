@@ -9,7 +9,7 @@ class youtube(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name='youtube', description="YouTube動画のダウンロードリンクを取得します。")
+    @discord.slash_command(name="youtube", description="YouTube動画のダウンロードリンクを取得します。")
     async def youtube(self, interaction: discord.ApplicationContext, url:discord.Option(str, required=True, description="ダウンロードしたい動画のURLを入力")):
 
         await interaction.response.defer()

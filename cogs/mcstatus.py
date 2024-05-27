@@ -9,7 +9,7 @@ class mcstatus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name='mcstatus', description="マイクラのサーバーステータスを確認します。")
+    @discord.slash_command(name="mcstatus", description="マイクラのサーバーステータスを確認します。")
     async def mcstatus(self, ctx, server_address):
 
         url = f"https://api.mcstatus.io/v2/status/java/{server_address}"

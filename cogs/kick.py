@@ -11,6 +11,7 @@ class kick(commands.Cog):
         self.bot = bot
 
     @discord.slash_command(name="kick", description="指定したユーザーをサーバーからキックします。")
+    @commands.has_permissions(administrator = True)
     async def kick(self, ctx, member: Option(discord.Member, description = "キックするユーザーを選択"), reason: Option(str, description = "キック理由を入力(ログに記載されます。)", required = False)):
         if member.id == ctx.author.id:
             await ctx.respond("自分自身をkickすることはできません。", ephemeral=True)

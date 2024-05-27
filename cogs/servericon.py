@@ -8,7 +8,7 @@ class servericon(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name='servericon', description="サーバーのアイコンを取得します。")
+    @discord.slash_command(name="servericon", description="サーバーのアイコンを取得します。")
     async def servericon(self, interaction: discord.ApplicationContext):
 
         try:
