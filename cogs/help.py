@@ -36,8 +36,11 @@ class helpView(discord.ui.View):
             embed.add_field(name="/delete",
                     value="```コマンドを実行したチャンネルを削除します。```",
                     inline=False)
-            embed.add_field(name="",
-                    value="",
+            embed.add_field(name="/kicl",
+                    value="```指定したユーザーをキックします。```",
+                    inline=False)
+            embed.add_field(name="/ban",
+                    value="```指定したユーザーをBANします。```",
                     inline=False)
             embed.add_field(name="☆ほしい機能等があれば`/suggestion`でお願いします。",
                     value="",
