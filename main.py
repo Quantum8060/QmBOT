@@ -286,7 +286,8 @@ cogs_list = [
     'dm',
     'ban',
     'kick',
-    'channel'
+    'channel',
+    'tasks'
 ]
 
 for cog in cogs_list:

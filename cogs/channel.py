@@ -11,7 +11,7 @@ class t_channel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="create_text", description="テキストチャンネルを作成します。", guild_ids=Debug_guild)
+    @discord.slash_command(name="create_text", description="テキストチャンネルを作成します。")
     async def t_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
         await interaction.guild.create_text_channel(name=name, category=category)
         await interaction.response.send_message(f"{name}を作成しました", ephemeral=True)
@@ -21,7 +21,7 @@ class v_channel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="create_voice", description="ボイスチャンネルを作成します。", guild_ids=Debug_guild)
+    @discord.slash_command(name="create_voice", description="ボイスチャンネルを作成します。")
     async def v_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
         await interaction.guild.create_voice_channel(name=name, category=category)
         await interaction.response.send_message(f"{name}を作成しました。", ephemeral=True)
@@ -31,7 +31,7 @@ class d_channel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="delete", description="チャンネルを削除します。", guild_ids=Debug_guild)
+    @discord.slash_command(name="delete", description="チャンネルを削除します。")
     async def d_channel(self, interaction: discord.ApplicationContext):
         await interaction.response.send_message("チャンネルを削除します。しばらくお待ちください。", ephemeral=True)
         await sleep(10)
