@@ -1,11 +1,19 @@
 import discord
 from discord.ext import commands
 import discord.ui
-
+import json
 
 Debug_guild = [1235247721934360577]
 
+blacklist_file = 'blacklist.json'
 
+def load_data():
+    with open(blacklist_file, 'r') as file:
+        return json.load(file)
+
+def save_data(data):
+    with open(blacklist_file, 'w') as file:
+        json.dump(data, file, indent=4)
 
 class helpView(discord.ui.View):
 
@@ -107,8 +115,14 @@ class help(commands.Cog):
 
     @discord.slash_command(name="help", description="コマンド一覧を表示します。")
     async def help(self, ctx):
-        await ctx.respond("以下のボタンを押すことで指定したコマンド一覧を表示できます。", view=helpView(), ephemeral=True)
+        user_id = str(ctx.author.id)
 
+        data = load_data()
+
+        if user_id not in data:
+            await ctx.respond("以下のボタンを押すことで指定したコマンド一覧を表示できます。", view=helpView(), ephemeral=True)
+        else:
+            await ctx.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 def setup(bot):
     bot.add_cog(help(bot))

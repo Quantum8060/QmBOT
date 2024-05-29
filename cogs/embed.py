@@ -3,9 +3,20 @@ from discord.ext import commands
 import aiohttp
 from discord import webhook
 import discord.ui
-
+import json
 
 Debug_guild = [1235247721934360577]
+
+blacklist_file = 'blacklist.json'
+
+def load_data():
+    with open(blacklist_file, 'r') as file:
+        return json.load(file)
+
+def save_data(data):
+    with open(blacklist_file, 'w') as file:
+        json.dump(data, file, indent=4)
+
 class EmbedModal(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -33,10 +44,17 @@ class embed(commands.Cog):
 
     @discord.slash_command(name="embed", description="メッセージを埋め込みにして送信します。")
     async def webhookembed(self, interaction: discord.ApplicationContext):
+        user_id = str(interaction.author.id)
 
-        modal = EmbedModal(title="Embedコマンド")
-        await interaction.send_modal(modal)
-        await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
+        data = load_data()
+
+        if user_id not in data:
+
+            modal = EmbedModal(title="Embedコマンド")
+            await interaction.send_modal(modal)
+            await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
+        else:
+            await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 def setup(bot):
     bot.add_cog(embed(bot))
