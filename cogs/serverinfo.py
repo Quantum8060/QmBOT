@@ -17,6 +17,7 @@ class serverinfo(commands.Cog):
         embed.add_field(name="id", value=f"{interaction.guild.id}", inline=False)
         embed.add_field(name="メンバー数", value=f"{interaction.guild.member_count}", inline=False)
         embed.add_field(name="サーバー作成日", value=f"{interaction.guild.created_at}", inline=False)
+        embed.add_field(name="オンライン数", value=f"{interaction.guild.approximate_member_count}", inline=False)
         embed.set_footer(text=f"{interaction.user.display_name}", icon_url=interaction.user.avatar.url)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 

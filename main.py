@@ -44,7 +44,7 @@ async def on_ready():
     await channel.send(f"{bot.user}BOT起動完了")
 
 #サーバー数表示
-@tasks.loop(hours=2)
+@tasks.loop(hours=6)
 async def s_loop():
     count = len(bot.guilds)
     await bot.change_presence(activity=discord.Game(name="現在の参加サーバー数" + str(count), type=1))
@@ -98,7 +98,7 @@ def save_data(data):
 
 #add blacklist
 @bot.slash_command(name="add_blacklist", description="ユーザーをブラックリストに追加します。")
-@commands.has_permissions(administrator = True)
+@commands.is_owner()
 async def a_blacklist(interaction: discord.Interaction, user: discord.Member, reason: discord.Option(str, description="理由を入力します。")):
     b_id = str(interaction.author.id)
 
@@ -287,7 +287,8 @@ cogs_list = [
     'ban',
     'kick',
     'channel',
-    'tasks'
+    'tasks',
+    'avatar'
 ]
 
 for cog in cogs_list:

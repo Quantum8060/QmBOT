@@ -9,7 +9,7 @@ class clear(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="clear", description="指定された数のメッセージを削除します。", guild_ids=Debug_guild)
+    @discord.slash_command(name="clear", description="指定された数のメッセージを削除します。")
     @commands.has_permissions(administrator = True)
     async def clear(self, interaction: discord.ApplicationContext, num: discord.Option(str, required=True, description="削除するメッセージ数を入力")):
 

@@ -26,6 +26,17 @@ class v_channel(commands.Cog):
         await interaction.guild.create_voice_channel(name=name, category=category)
         await interaction.response.send_message(f"{name}を作成しました。", ephemeral=True)
 
+class f_channel(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    @discord.slash_command(name="create_forum", description="ボイスチャンネルを作成します。")
+    async def f_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
+        await interaction.guild.create_forum_channel(name=name, category=category)
+        await interaction.response.send_message(f"{name}を作成しました。", ephemeral=True)
+
+
 class d_channel(commands.Cog):
 
     def __init__(self, bot):
@@ -41,3 +52,4 @@ def setup(bot):
     bot.add_cog(t_channel(bot))
     bot.add_cog(v_channel(bot))
     bot.add_cog(d_channel(bot))
+    bot.add_cog(f_channel(bot))
