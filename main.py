@@ -188,7 +188,8 @@ async def on_message(message):
                 if any(attachment.filename.lower().endswith(image_ext) for image_ext in ['png', 'jpg', 'jpeg', 'gif', 'webp']):
                     embed.set_image(url=attachment.url)
 
-            await message.channel.send(embed=embed)
+            if (target_message.content != "") and (not author.bot):
+                await message.channel.send(embed=embed)
 
             for original_embed in target_message.embeds:
                 await message.channel.send(embed=original_embed)
