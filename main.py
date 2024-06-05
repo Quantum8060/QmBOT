@@ -11,6 +11,8 @@ import aiohttp
 import json
 import configparser
 from discord.ext import tasks
+import asyncio
+import subprocess
 
 
 intents = discord.Intents.default()
@@ -267,6 +269,34 @@ async def stop(ctx):
     await ctx.respond("BOTを停止します。", ephemeral=True)
     print("BOTを停止しました。\n------")
     await bot.close()
+    await asyncio.sleep(1)
+    loop = asyncio.get_event_loop()
+    loop.stop()
+
+
+
+#set status
+@bot.slash_command(name="set_dnd", description="取り込み中にします。", guild_ids=Debug_guild)
+async def set_d(ctx):
+    await bot.change_presence(status= discord.Status.dnd)
+    await ctx.respond("変更しました。", ephemeral=True)
+
+@bot.slash_command(name="set_idle", description="退出中にします。", guild_ids=Debug_guild)
+async def set_d(ctx):
+    await bot.change_presence(status= discord.Status.idle)
+    await ctx.respond("変更しました。", ephemeral=True)
+
+@bot.slash_command(name="set_online", description="オンラインにします。", guild_ids=Debug_guild)
+async def set_d(ctx):
+    await bot.change_presence(status= discord.Status.online)
+    await ctx.respond("変更しました。", ephemeral=True)
+
+@bot.slash_command(name="set_streaming", description="ストリーミングにします。", guild_ids=Debug_guild)
+async def set_d(ctx):
+    await bot.change_presence(status= discord.Status.streaming)
+    await ctx.respond("変更しました。", ephemeral=True)
+
+
 
 
 
