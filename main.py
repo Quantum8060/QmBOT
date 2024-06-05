@@ -291,13 +291,6 @@ async def set_d(ctx):
     await bot.change_presence(status= discord.Status.online)
     await ctx.respond("変更しました。", ephemeral=True)
 
-@bot.slash_command(name="set_streaming", description="ストリーミングにします。", guild_ids=Debug_guild)
-async def set_d(ctx):
-    await bot.change_presence(status= discord.Status.streaming)
-    await ctx.respond("変更しました。", ephemeral=True)
-
-
-
 
 
 #cogs登録
