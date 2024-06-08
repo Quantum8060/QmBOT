@@ -13,6 +13,7 @@ import configparser
 from discord.ext import tasks
 import asyncio
 import subprocess
+import time
 
 
 intents = discord.Intents.default()
@@ -275,24 +276,6 @@ async def stop(ctx):
 
 
 
-#set status
-@bot.slash_command(name="set_dnd", description="取り込み中にします。", guild_ids=Debug_guild)
-async def set_d(ctx):
-    await bot.change_presence(status= discord.Status.dnd)
-    await ctx.respond("変更しました。", ephemeral=True)
-
-@bot.slash_command(name="set_idle", description="退出中にします。", guild_ids=Debug_guild)
-async def set_d(ctx):
-    await bot.change_presence(status= discord.Status.idle)
-    await ctx.respond("変更しました。", ephemeral=True)
-
-@bot.slash_command(name="set_online", description="オンラインにします。", guild_ids=Debug_guild)
-async def set_d(ctx):
-    await bot.change_presence(status= discord.Status.online)
-    await ctx.respond("変更しました。", ephemeral=True)
-
-
-
 #cogs登録
 cogs_list = [
     'help',
@@ -312,7 +295,8 @@ cogs_list = [
     'kick',
     'channel',
     'tasks',
-    'avatar'
+    'avatar',
+    'status'
 ]
 
 for cog in cogs_list:
