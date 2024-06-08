@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import psutil
+import datetime
 
 Debug_guild = [1235247721934360577]
 
@@ -13,10 +14,13 @@ class tasks(commands.Cog):
     @commands.is_owner()
     async def tasks(self, interaction: discord.ApplicationContext):
 
+        time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+
         embed = discord.Embed(title="サーバー状況", description="サーバーの状態を表示しています。", color=0x4169e1)
-        embed.add_field(name="CPU", value=f"{psutil.cpu_percent(interval=1)}％", inline=False)
-        embed.add_field(name="Memory", value=f"{psutil.virtual_memory().percent}％", inline=False)
-        embed.add_field(name="STORAGE", value=f"{psutil.disk_usage('/').percent}％", inline=False)
+        embed.add_field(name="CPU使用率", value=f"{psutil.cpu_percent(interval=1)}％", inline=False)
+        embed.add_field(name="メモリ使用率", value=f"{psutil.virtual_memory().percent}％", inline=False)
+        embed.add_field(name="ストレージ使用率", value=f"{psutil.disk_usage('/').percent}％", inline=False)
+        embed.add_field(name="サーバー起動時刻", value=f"{time}", inline=False)
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
