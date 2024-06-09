@@ -15,6 +15,16 @@ def save_data(data):
     with open(blacklist_file, 'w') as file:
         json.dump(data, file, indent=4)
 
+lock_file = 'lock.json'
+
+def load_lock_data():
+    with open(lock_file, 'r') as file:
+        return json.load(file)
+
+def save_lock_data(data):
+    with open(lock_file, 'w') as file:
+        json.dump(data, file, indent=4)
+
 class clear(commands.Cog):
 
     def __init__(self, bot):
@@ -24,18 +34,23 @@ class clear(commands.Cog):
     @commands.has_permissions(administrator = True)
     async def clear(self, interaction: discord.ApplicationContext, num: discord.Option(str, required=True, description="削除するメッセージ数を入力")):
         user_id = str(interaction.author.id)
+        server_id = str(interaction.guild.id)
 
         data = load_data()
+        l_data = load_lock_data()
 
-        if user_id not in data:
-            async for message in interaction.channel.history(limit=int(num)):
-                await message.delete(delay=1.2)
+        if server_id not in l_data:
+            if user_id not in data:
+                async for message in interaction.channel.history(limit=int(num)):
+                    await message.delete(delay=1.2)
 
-            embed=discord.Embed(title="メッセージ削除", description=f"{num}メッセージを削除しました。", color=0x4169e1)
-            embed.add_field(name="", value="")
-            await interaction.respond(embeds=[embed], ephemeral=True)
+                embed=discord.Embed(title="メッセージ削除", description=f"{num}メッセージを削除しました。", color=0x4169e1)
+                embed.add_field(name="", value="")
+                await interaction.respond(embeds=[embed], ephemeral=True)
+            else:
+                await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
         else:
-            await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+            await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
 
     @clear.error
     async def clearerror(ctx, error):
@@ -44,7 +59,6 @@ class clear(commands.Cog):
         else:
             await ctx.respond("Something went wrong...", ephemeral=True)
         raise error
-
 
 def setup(bot):
     bot.add_cog(clear(bot))

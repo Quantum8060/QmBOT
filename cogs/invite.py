@@ -14,6 +14,16 @@ def save_data(data):
     with open(blacklist_file, 'w') as file:
         json.dump(data, file, indent=4)
 
+lock_file = 'lock.json'
+
+def load_lock_data():
+    with open(lock_file, 'r') as file:
+        return json.load(file)
+
+def save_lock_data(data):
+    with open(lock_file, 'w') as file:
+        json.dump(data, file, indent=4)
+
 class invite(commands.Cog):
 
     def __init__(self, bot):
@@ -23,19 +33,24 @@ class invite(commands.Cog):
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def invite(self, interaction: discord.ApplicationContext):
         user_id = str(interaction.author.id)
+        server_id = str(interaction.guild.id)
 
         data = load_data()
+        l_data = load_lock_data()
 
-        if user_id not in data:
-            button = discord.ui.Button(label="Invite BOT!", style=discord.ButtonStyle.primary, url="https://discord.com/oauth2/authorize?client_id=1057679845087252521&permissions=8&scope=bot+applications.commands")
+        if server_id not in l_data:
+            if user_id not in data:
+                button = discord.ui.Button(label="Invite BOT!", style=discord.ButtonStyle.primary, url="https://discord.com/oauth2/authorize?client_id=1057679845087252521&permissions=8&scope=bot+applications.commands")
 
-            embed=discord.Embed(title="QmBOT招待", description="BOTを招待する場合は下のボタンを押してください。", color=0x4169e1)
-            embed.add_field(name="", value="")
-            view = discord.ui.View()
-            view.add_item(button)
-            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+                embed=discord.Embed(title="QmBOT招待", description="BOTを招待する場合は下のボタンを押してください。", color=0x4169e1)
+                embed.add_field(name="", value="")
+                view = discord.ui.View()
+                view.add_item(button)
+                await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+            else:
+                await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
         else:
-            await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+            await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
 
 def setup(bot):
     bot.add_cog(invite(bot))

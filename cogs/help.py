@@ -15,6 +15,16 @@ def save_data(data):
     with open(blacklist_file, 'w') as file:
         json.dump(data, file, indent=4)
 
+lock_file = 'lock.json'
+
+def load_lock_data():
+    with open(lock_file, 'r') as file:
+        return json.load(file)
+
+def save_lock_data(data):
+    with open(lock_file, 'w') as file:
+        json.dump(data, file, indent=4)
+
 class helpView(discord.ui.View):
 
         @discord.ui.button(label="管理者用コマンド一覧", style=discord.ButtonStyle.green)
@@ -116,13 +126,18 @@ class help(commands.Cog):
     @discord.slash_command(name="help", description="コマンド一覧を表示します。")
     async def help(self, ctx):
         user_id = str(ctx.author.id)
+        server_id = str(ctx.guild.id)
 
         data = load_data()
+        l_data = load_lock_data()
 
-        if user_id not in data:
-            await ctx.respond("以下のボタンを押すことで指定したコマンド一覧を表示できます。", view=helpView(), ephemeral=True)
+        if server_id not in l_data:
+            if user_id not in data:
+                await ctx.respond("以下のボタンを押すことで指定したコマンド一覧を表示できます。", view=helpView(), ephemeral=True)
+            else:
+                await ctx.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
         else:
-            await ctx.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+            await ctx.response.send_message("このサーバーはロックされています。", ephemeral=True)
 
 def setup(bot):
     bot.add_cog(help(bot))

@@ -27,16 +27,6 @@ bot = discord.Bot(intents=intents)
 bot.webhooks = {}
 Debug_guild = [1235247721934360577]
 
-blacklist_file = 'blacklist.json'
-
-def load_data():
-    with open(blacklist_file, 'r') as file:
-        return json.load(file)
-
-def save_data(data):
-    with open(blacklist_file, 'w') as file:
-        json.dump(data, file, indent=4)
-
 #起動通知
 @bot.event
 async def on_ready():
@@ -90,12 +80,11 @@ async def stop_recording(ctx:discord.ApplicationContext):
 
 blacklist_file = 'blacklist.json'
 
-def load_data():
+def load_blacklist_data():
     with open(blacklist_file, 'r') as file:
         return json.load(file)
 
-# データをJSONファイルに書き込む関数
-def save_data(data):
+def save_blacklist_data(data):
     with open(blacklist_file, 'w') as file:
         json.dump(data, file, indent=4)
 
@@ -105,7 +94,7 @@ def save_data(data):
 async def a_blacklist(interaction: discord.Interaction, user: discord.Member, reason: discord.Option(str, description="理由を入力します。")):
     b_id = str(interaction.author.id)
 
-    data = load_data()
+    data = load_blacklist_data()
 
     if b_id not in data:
 
@@ -138,7 +127,7 @@ async def a_blacklisterror(ctx, error):
 async def s_blacklist(interaction: discord.ApplicationContext):
     b_id = str(interaction.author.id)
 
-    data = load_data()
+    data = load_blacklist_data()
 
     if b_id not in data:
         try:
@@ -150,7 +139,7 @@ async def s_blacklist(interaction: discord.ApplicationContext):
 
         user_id = str(interaction.author.id)
 
-        data = load_data()
+        data = load_blacklist_data()
 
         embed = discord.Embed(title="ブラックリストユーザー一覧")
 
@@ -224,7 +213,7 @@ class suggestionModal(discord.ui.Modal):
 async def suggestion(interaction: discord.ApplicationContext):
     user_id = str(interaction.author.id)
 
-    data = load_data()
+    data = load_blacklist_data()
 
     if user_id not in data:
         modal = suggestionModal(title="BOT管理者に送信。")
@@ -242,7 +231,7 @@ async def suggestionIM(interaction: discord.ApplicationContext, picture: discord
 
     user_id = str(interaction.author.id)
 
-    data = load_data()
+    data = load_blacklist_data()
 
     if user_id not in data:
         embed = discord.Embed(title="BOTに関する提案", color=0x4169e1)
@@ -274,6 +263,41 @@ async def stop(ctx):
     loop = asyncio.get_event_loop()
     loop.stop()
 
+
+
+#lock
+lock_file = 'lock.json'
+
+def load_lock_data():
+    with open(lock_file, 'r') as file:
+        return json.load(file)
+
+def save_lock_data(data):
+    with open(lock_file, 'w') as file:
+        json.dump(data, file, indent=4)
+
+@bot.slash_command(name="lock", description="全コマンドの使用を禁止します。", guild_ids=Debug_guild)
+@commands.is_owner()
+async def lock(interaction: discord.Interaction, reason: discord.Option(str, description="理由を入力します。")):
+    b_id = str(interaction.author.id)
+    l_id = str(interaction.guild.id)
+
+    b_data = load_blacklist_data()
+    data = load_lock_data()
+
+    if b_id not in data:
+
+        data = load_lock_data()
+
+        if l_id not in data:
+            await interaction.respond(f"サーバー:{l_id}をロックしました。", ephemeral=True)
+
+            data[str(interaction.guild.id)] = reason
+            save_lock_data(data)
+        else:
+            await interaction.response.send_message("このサーバーはすでにロックされています。", ephemeral=True)
+    else:
+        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
 
 #cogs登録

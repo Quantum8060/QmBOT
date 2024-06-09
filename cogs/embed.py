@@ -17,6 +17,16 @@ def save_data(data):
     with open(blacklist_file, 'w') as file:
         json.dump(data, file, indent=4)
 
+lock_file = 'lock.json'
+
+def load_lock_data():
+    with open(lock_file, 'r') as file:
+        return json.load(file)
+
+def save_lock_data(data):
+    with open(lock_file, 'w') as file:
+        json.dump(data, file, indent=4)
+
 class EmbedModal(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -45,16 +55,20 @@ class embed(commands.Cog):
     @discord.slash_command(name="embed", description="メッセージを埋め込みにして送信します。")
     async def webhookembed(self, interaction: discord.ApplicationContext):
         user_id = str(interaction.author.id)
+        server_id = str(interaction.guild.id)
 
         data = load_data()
+        l_data = load_lock_data()
 
-        if user_id not in data:
-
-            modal = EmbedModal(title="Embedコマンド")
-            await interaction.send_modal(modal)
-            await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
+        if server_id not in l_data:
+            if user_id not in data:
+                modal = EmbedModal(title="Embedコマンド")
+                await interaction.send_modal(modal)
+                await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
+            else:
+                await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
         else:
-            await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+            await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
 
 def setup(bot):
     bot.add_cog(embed(bot))
