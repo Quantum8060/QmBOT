@@ -265,41 +265,6 @@ async def stop(ctx):
 
 
 
-#lock
-lock_file = 'lock.json'
-
-def load_lock_data():
-    with open(lock_file, 'r') as file:
-        return json.load(file)
-
-def save_lock_data(data):
-    with open(lock_file, 'w') as file:
-        json.dump(data, file, indent=4)
-
-@bot.slash_command(name="lock", description="全コマンドの使用を禁止します。", guild_ids=Debug_guild)
-@commands.is_owner()
-async def lock(interaction: discord.Interaction, reason: discord.Option(str, description="理由を入力します。")):
-    b_id = str(interaction.author.id)
-    l_id = str(interaction.guild.id)
-
-    b_data = load_blacklist_data()
-    data = load_lock_data()
-
-    if b_id not in data:
-
-        data = load_lock_data()
-
-        if l_id not in data:
-            await interaction.respond(f"サーバー:{l_id}をロックしました。", ephemeral=True)
-
-            data[str(interaction.guild.id)] = reason
-            save_lock_data(data)
-        else:
-            await interaction.response.send_message("このサーバーはすでにロックされています。", ephemeral=True)
-    else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
-
-
 #cogs登録
 cogs_list = [
     'help',
@@ -320,7 +285,8 @@ cogs_list = [
     'channel',
     'tasks',
     'avatar',
-    'status'
+    'status',
+    'lock'
 ]
 
 for cog in cogs_list:
