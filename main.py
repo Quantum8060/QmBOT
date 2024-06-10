@@ -302,7 +302,6 @@ async def lock(interaction: discord.Interaction, reason: discord.Option(str, des
 
 #cogs登録
 cogs_list = [
-    'help',
     'clear',
     'ping',
     'userinfo',
