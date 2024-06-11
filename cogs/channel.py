@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from discord import Option
-from discord.ext.commands import MissingPermissions
 from asyncio import sleep
 import json
 

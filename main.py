@@ -2,8 +2,6 @@ import discord
 import discord.ui
 from discord import option
 import os
-import sys
-import datetime
 from discord.ext import commands
 from discord.ext.commands import MissingPermissions
 from time import sleep
@@ -12,8 +10,6 @@ import json
 import configparser
 from discord.ext import tasks
 import asyncio
-import subprocess
-import time
 
 
 intents = discord.Intents.default()

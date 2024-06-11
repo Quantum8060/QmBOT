@@ -3,8 +3,6 @@ from discord.ext import commands
 import discord.ui
 from discord.ext.commands import NotOwner
 
-
-
 Debug_guild = [1235247721934360577]
 
 class dmModal(discord.ui.Modal):
