@@ -281,7 +281,8 @@ cogs_list = [
     'tasks',
     'avatar',
     'status',
-    'lock'
+    'lock',
+    'random'
 ]
 
 for cog in cogs_list:
