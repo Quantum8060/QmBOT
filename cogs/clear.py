@@ -60,5 +60,43 @@ class clear(commands.Cog):
             await ctx.respond("Something went wrong...", ephemeral=True)
         raise error
 
+
+
+class cleanup(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    @discord.slash_command(name="cleanup", description="チャンネル内の全メッセージを削除します。※負荷対策で100が上限です。")
+    @commands.has_permissions(administrator = True)
+    async def cleanup(self, interaction: discord.ApplicationContext):
+        user_id = str(interaction.author.id)
+        server_id = str(interaction.guild.id)
+
+        data = load_data()
+        l_data = load_lock_data()
+
+        if server_id not in l_data:
+            if user_id not in data:
+                async for message in interaction.channel.history(limit=int(100)):
+                    await message.delete(delay=1.2)
+
+                embed=discord.Embed(title="メッセージ削除", description="メッセージを削除しました。", color=0x4169e1)
+                embed.add_field(name="", value="")
+                await interaction.respond(embeds=[embed], ephemeral=True)
+            else:
+                await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+        else:
+            await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
+
+    @cleanup.error
+    async def cleanuperror(ctx, error):
+        if isinstance(error, MissingPermissions):
+            await ctx.respond("あなたはこのコマンドを使用する権限を持っていません!", ephemeral=True)
+        else:
+            await ctx.respond("Something went wrong...", ephemeral=True)
+        raise error
+
 def setup(bot):
     bot.add_cog(clear(bot))
+    bot.add_cog(cleanup(bot))
