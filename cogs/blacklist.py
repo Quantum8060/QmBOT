@@ -50,7 +50,7 @@ class s_blacklist(commands.Cog):
 
     @discord.slash_command(name="show_blacklist", description="ブラックリストを一覧表示します。")
     @commands.is_owner()
-    async def s_blacklist(interaction: discord.ApplicationContext):
+    async def s_blacklist(self, interaction: discord.ApplicationContext):
         b_id = str(interaction.author.id)
 
         data = load_blacklist_data()
