@@ -84,68 +84,6 @@ def save_blacklist_data(data):
     with open(blacklist_file, 'w') as file:
         json.dump(data, file, indent=4)
 
-#add blacklist
-@bot.slash_command(name="add_blacklist", description="ユーザーをブラックリストに追加します。")
-@commands.is_owner()
-async def a_blacklist(interaction: discord.Interaction, user: discord.Member, reason: discord.Option(str, description="理由を入力します。")):
-    b_id = str(interaction.author.id)
-
-    data = load_blacklist_data()
-
-    if b_id not in data:
-
-        user_id = await bot.fetch_user(f"{user.id}")
-
-        data = load_data()
-
-        if user_id not in data:
-            await interaction.respond(f"{user.mention}をブラックリストに追加しました。", ephemeral=True)
-
-            data[str(user.id)] = reason
-            save_data(data)
-        else:
-            await interaction.response.send_message("このユーザーはすでにブラックリストに追加されています。", ephemeral=True)
-    else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
-
-@a_blacklist.error
-async def a_blacklisterror(ctx, error):
-        if isinstance(error, MissingPermissions):
-            await ctx.respond("あなたはこのコマンドを使用する権限を持っていません!", ephemeral=True)
-        else:
-            await ctx.respond("Something went wrong...", ephemeral=True)
-        raise error
-
-
-
-#show blacklist
-@bot.slash_command(name="show_blacklist", description="ブラックリストを一覧表示します。")
-async def s_blacklist(interaction: discord.ApplicationContext):
-    b_id = str(interaction.author.id)
-
-    data = load_blacklist_data()
-
-    if b_id not in data:
-        try:
-            with open(blacklist_file, 'r') as file:
-                data = json.load(file)
-        except FileNotFoundError:
-            await interaction.send("データファイルが見つかりませんでした。")
-            return
-
-        user_id = str(interaction.author.id)
-
-        data = load_blacklist_data()
-
-        embed = discord.Embed(title="ブラックリストユーザー一覧")
-
-        user_info = "\n".join([f"<@!{key}> : {value}" for key, value in data.items()])
-        embed.add_field(name="ブラックリストユーザーの一覧です。", value=user_info, inline=False)
-
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-    else:
-        await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
-
 
 
 #open message
@@ -282,7 +220,8 @@ cogs_list = [
     'avatar',
     'status',
     'lock',
-    'random'
+    'random',
+    'blacklist'
 ]
 
 for cog in cogs_list:
