@@ -13,6 +13,7 @@ class stop(commands.Cog):
         self.bot = bot
 
     @discord.slash_command(name="stop", description="BOTを停止します。")
+    @commands.is_owner()
     async def stop(self, ctx):
         await ctx.respond("BOTを停止します。", ephemeral=True)
         print("BOTを停止しました。\n------")
