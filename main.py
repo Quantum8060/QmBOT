@@ -40,40 +40,6 @@ async def s_loop():
 
 
 
-'''
-@bot.slash_command(name="r_start", description="VCの録音を開始します。")
-async def start_record(ctx:discord.ApplicationContext):
-    # コマンドを使用したユーザーのボイスチャンネルに接続
-    try:
-       vc = await ctx.author.voice.channel.connect()
-       await ctx.respond("録音開始...")
-    except AttributeError:
-       await ctx.respond("ボイスチャンネルに入ってください。")
-       return
-
-    # 録音開始。mp3で帰ってくる。wavだとなぜか壊れる。
-    ctx.voice_client.start_recording(discord.sinks.MP3Sink(), finished_callback, ctx)
-
-
-async def finished_callback(sink:discord.sinks.MP3Sink, ctx:discord.ApplicationContext):
-    # 録音したユーザーの音声を取り出す
-    recorded_users = [
-        f"<@{user_id}>"
-        for user_id, audio in sink.audio_data.items()
-    ]
-    # discordにファイル形式で送信。拡張子はmp3。
-    files = [discord.File(audio.file, f"{user_id}.{sink.encoding}") for user_id, audio in sink.audio_data.items()]
-    await ctx.channel.send(f"録音終了 {', '.join(recorded_users)}.", files=files) 
-
-@bot.slash_command(name="r_stop", description="VCの録音を終了します。")
-async def stop_recording(ctx:discord.ApplicationContext):
-    # 録音停止
-    ctx.voice_client.stop_recording()
-    await ctx.respond("録音終了")
-    await ctx.voice_client.disconnect()
-'''
-
-
 blacklist_file = 'blacklist.json'
 
 def load_blacklist_data():
@@ -187,16 +153,6 @@ def stop_py():
         print("osを切ります。")
         os.system("kill 1")
 
-@bot.slash_command(name="stop", description="BOTを停止します。")
-@commands.is_owner()
-async def stop(ctx):
-    await ctx.respond("BOTを停止します。", ephemeral=True)
-    print("BOTを停止しました。\n------")
-    await bot.close()
-    await asyncio.sleep(1)
-    loop = asyncio.get_event_loop()
-    loop.stop()
-
 
 
 #cogs登録
@@ -221,7 +177,8 @@ cogs_list = [
     'status',
     'lock',
     'random',
-    'blacklist'
+    'blacklist',
+    'stop'
 ]
 
 for cog in cogs_list:
