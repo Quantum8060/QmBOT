@@ -75,7 +75,7 @@ class f_channel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="create_forum", description="ボイスチャンネルを作成します。")
+    @discord.slash_command(name="create_forum", description="フォーラムチャンネルを作成します。")
     async def f_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
         user_id = str(interaction.author.id)
         server_id = str(interaction.guild.id)

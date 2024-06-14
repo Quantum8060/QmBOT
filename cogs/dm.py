@@ -28,7 +28,7 @@ class dm(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="dm", description="メッセージを埋め込みにして送信します。")
+    @discord.slash_command(name="dm", description="指定したユーザーにDMを送信します。")
     @commands.is_owner()
     async def dm(self, interaction: discord.ApplicationContext):
 

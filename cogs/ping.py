@@ -30,7 +30,7 @@ class ping(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="ping", description="指定された数のメッセージを削除します。")
+    @discord.slash_command(name="ping", description="BOTのPingを表示します。")
     async def ping(self, ctx: discord.ApplicationContext):
         user_id = str(ctx.author.id)
         server_id = str(ctx.guild.id)
