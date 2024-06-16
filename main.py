@@ -10,6 +10,9 @@ import json
 import configparser
 from discord.ext import tasks
 import asyncio
+import random
+import string
+from dotenv import load_dotenv
 
 
 intents = discord.Intents.default()
@@ -23,14 +26,21 @@ bot = discord.Bot(intents=intents)
 bot.webhooks = {}
 Debug_guild = [1235247721934360577]
 
+global result
+result = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+
 #起動通知
 @bot.event
 async def on_ready():
     s_loop.start()
+    os.environ['PASS'] = result
     print(f"Bot名:{bot.user} On ready!!")
+    print(os.environ['PASS'])
     print("------")
     channel = await bot.fetch_channel("1235247794114134037")
+    pass_channel = await bot.fetch_channel("1251824100515512432")
     await channel.send(f"{bot.user}BOT起動完了")
+    await pass_channel.send(f"{result}")
 
 #サーバー数表示
 @tasks.loop(hours=6)
