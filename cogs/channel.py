@@ -32,6 +32,7 @@ class t_channel(commands.Cog):
         self.bot = bot
 
     @discord.slash_command(name="create_text", description="テキストチャンネルを作成します。")
+    @commands.has_permissions(administrator = True)
     async def t_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
         user_id = str(interaction.author.id)
         server_id = str(interaction.guild.id)
@@ -54,6 +55,7 @@ class v_channel(commands.Cog):
         self.bot = bot
 
     @discord.slash_command(name="create_voice", description="ボイスチャンネルを作成します。")
+    @commands.has_permissions(administrator = True)
     async def v_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
         user_id = str(interaction.author.id)
         server_id = str(interaction.guild.id)
@@ -76,6 +78,7 @@ class f_channel(commands.Cog):
         self.bot = bot
 
     @discord.slash_command(name="create_forum", description="フォーラムチャンネルを作成します。")
+    @commands.has_permissions(administrator = True)
     async def f_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
         user_id = str(interaction.author.id)
         server_id = str(interaction.guild.id)
@@ -98,6 +101,7 @@ class d_channel(commands.Cog):
         self.bot = bot
 
     @discord.slash_command(name="delete", description="チャンネルを削除します。")
+    @commands.has_permissions(administrator = True)
     async def d_channel(self, interaction: discord.ApplicationContext):
         user_id = str(interaction.author.id)
         server_id = str(interaction.guild.id)
