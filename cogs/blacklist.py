@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.commands import SlashCommandGroup
 import json
 
 Debug_guild = [1235247721934360577]
@@ -15,12 +16,15 @@ def save_blacklist_data(data):
         json.dump(data, file, indent=4)
 
 
-class a_blacklist(commands.Cog):
+class blacklist(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="add_blacklist", description="ユーザーをブラックリストに追加します。")
+
+    blacklists = SlashCommandGroup("blacklist", "ブラックリストグループ")
+
+    @blacklists.command(name="add", description="ユーザーをブラックリストに追加します。", guild_ids=Debug_guild)
     @commands.is_owner()
     async def a_blacklist(self, interaction: discord.ApplicationContext, user:discord.Member, reason: discord.Option(str, description="理由を入力します。")):
         b_id = str(interaction.author.id)
@@ -43,12 +47,7 @@ class a_blacklist(commands.Cog):
         else:
             await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
 
-class s_blacklist(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-    @discord.slash_command(name="show_blacklist", description="ブラックリストを一覧表示します。")
+    @blacklists.command(name="show", description="ブラックリストを一覧表示します。")
     @commands.is_owner()
     async def s_blacklist(self, interaction: discord.ApplicationContext):
         b_id = str(interaction.author.id)
@@ -76,5 +75,4 @@ class s_blacklist(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(a_blacklist(bot))
-    bot.add_cog(s_blacklist(bot))
+    bot.add_cog(blacklist(bot))

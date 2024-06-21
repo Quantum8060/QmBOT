@@ -173,18 +173,18 @@ async def add(ctx, num1: int, num2: int):
   sum = num1 + num2
   await ctx.respond(f"{sum}")
 
-@math.command(name="minus", description="引きます。")
+@math.command(name="subtract", description="引きます。")
 async def subtract(ctx, num1: int, num2: int):
   sum = num1 - num2
   await ctx.respond(f"{sum}")
 
 @math.command(name="multiplication",description="掛けます。")
-async def subtract(ctx, num1: int, num2: int):
+async def multiplication(ctx, num1: int, num2: int):
   sum = num1 * num2
   await ctx.respond(f"{sum}")
 
 @math.command(name="division", description="割ります")
-async def subtract(ctx, num1: int, num2: int):
+async def division(ctx, num1: int, num2: int):
   sum = num1 / num2
   await ctx.respond(f"{sum}")
 
