@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import Option
 from asyncio import sleep
+from discord.commands import SlashCommandGroup
 import json
 
 Debug_guild = [1235247721934360577]
@@ -26,12 +27,15 @@ def save_lock_data(data):
     with open(lock_file, 'w') as file:
         json.dump(data, file, indent=4)
 
-class t_channel(commands.Cog):
+class channel(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="create_text", description="テキストチャンネルを作成します。")
+    channels = SlashCommandGroup("channel", "ブラックリストグループ")
+
+
+    @channels.command(name="text", description="テキストチャンネルを作成します。")
     @commands.has_permissions(administrator = True)
     async def t_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
         user_id = str(interaction.author.id)
@@ -43,18 +47,13 @@ class t_channel(commands.Cog):
         if server_id not in l_data:
             if user_id not in data:
                 await interaction.guild.create_text_channel(name=name, category=category)
-                await interaction.response.send_message(f"{name}を作成しました", ephemeral=True)
+                await interaction.response.send_message(f"{name} を作成しました", ephemeral=True)
             else:
                 await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
         else:
             await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
 
-class v_channel(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-    @discord.slash_command(name="create_voice", description="ボイスチャンネルを作成します。")
+    @channels.command(name="voice", description="ボイスチャンネルを作成します。")
     @commands.has_permissions(administrator = True)
     async def v_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
         user_id = str(interaction.author.id)
@@ -72,12 +71,7 @@ class v_channel(commands.Cog):
         else:
             await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
 
-class f_channel(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-    @discord.slash_command(name="create_forum", description="フォーラムチャンネルを作成します。")
+    @channels.command(name="forum", description="フォーラムチャンネルを作成します。")
     @commands.has_permissions(administrator = True)
     async def f_channel(self, interaction: discord.ApplicationContext, name: discord.Option(str, required=True, description="作成するチャンネル名を入力"), category: discord.Option(discord.CategoryChannel, description="作成するカテゴリーを選択")):
         user_id = str(interaction.author.id)
@@ -94,6 +88,8 @@ class f_channel(commands.Cog):
                 await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
         else:
             await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
+
+
 
 class d_channel(commands.Cog):
 
@@ -120,7 +116,5 @@ class d_channel(commands.Cog):
             await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
 
 def setup(bot):
-    bot.add_cog(t_channel(bot))
-    bot.add_cog(v_channel(bot))
+    bot.add_cog(channel(bot))
     bot.add_cog(d_channel(bot))
-    bot.add_cog(f_channel(bot))
