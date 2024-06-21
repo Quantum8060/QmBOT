@@ -165,6 +165,32 @@ def stop_py():
 
 
 
+#group test
+math = discord.SlashCommandGroup("math", "Math related commands")
+
+@math.command(name="add", description="足します。")
+async def add(ctx, num1: int, num2: int):
+  sum = num1 + num2
+  await ctx.respond(f"{sum}")
+
+@math.command(name="minus", description="引きます。")
+async def subtract(ctx, num1: int, num2: int):
+  sum = num1 - num2
+  await ctx.respond(f"{sum}")
+
+@math.command(name="multiplication",description="掛けます。")
+async def subtract(ctx, num1: int, num2: int):
+  sum = num1 * num2
+  await ctx.respond(f"{sum}")
+
+@math.command(name="division", description="割ります")
+async def subtract(ctx, num1: int, num2: int):
+  sum = num1 / num2
+  await ctx.respond(f"{sum}")
+
+bot.add_application_command(math)
+
+
 #cogs登録
 cogs_list = [
     'clear',
