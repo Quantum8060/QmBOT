@@ -20,7 +20,6 @@ def load_lock_data():
     with open(lock_file, 'r') as file:
         return json.load(file)
 
-# データをJSONファイルに書き込む関数
 def save_lock_data(data):
     with open(lock_file, 'w') as file:
         json.dump(data, file, indent=4)
