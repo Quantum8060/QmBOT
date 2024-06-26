@@ -40,7 +40,10 @@ class EmbedModal(discord.ui.Modal):
         embed.add_field(name="", value="")
 
         async with aiohttp.ClientSession() as session:
-            webhook = await interaction.channel.create_webhook(name=f"{interaction.user.display_name}")
+
+            avatar = await interaction.user.avatar.read()
+
+            webhook = await interaction.channel.create_webhook(name=f"{interaction.user.display_name}", avatar=avatar)
 
         await webhook.send(embed=embed)
         await interaction.response.send_message("送信しました。", ephemeral=True)
