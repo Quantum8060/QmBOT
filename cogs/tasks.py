@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.commands import SlashCommandGroup
 import psutil
 import datetime
 
@@ -10,9 +11,10 @@ class tasks(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name='tasks', description="サーバーの使用状況を確認します。")
-    @commands.is_owner()
-    async def tasks(self, interaction: discord.ApplicationContext):
+    tasks = SlashCommandGroup("task", "タスクグループ")
+
+    @tasks.command(name='all', description="サーバーの使用状況を確認します。")
+    async def all(self, interaction: discord.ApplicationContext):
 
         time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -24,6 +26,46 @@ class tasks(commands.Cog):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
+    @tasks.command(name="cpu", description="CPUの使用状況を確認します。")
+    async def all(self, interaction: discord.ApplicationContext):
+
+        time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+
+        embed = discord.Embed(title="CPU使用状況", description="CPUの使用状況を表示します。", color=0x4169e1)
+        embed.add_field(name="CPU使用率", value=f"{psutil.cpu_percent(interval=1)}％", inline=False)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
+    @tasks.command(name="ram", description="メモリの使用状況を確認します。")
+    async def all(self, interaction: discord.ApplicationContext):
+
+        time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+
+        embed = discord.Embed(title="メモリ使用状況", description="メモリの使用状況を表示しています。", color=0x4169e1)
+        embed.add_field(name="メモリ使用率", value=f"{psutil.virtual_memory().percent}％", inline=False)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @tasks.command(name="rom", description="ストレージの使用状況を確認します。")
+    async def all(self, interaction: discord.ApplicationContext):
+
+        time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+
+        embed = discord.Embed(title="ストレージ使用状況", description="ストレージの使用状況を表示しています。", color=0x4169e1)
+        embed.add_field(name="ストレージ使用率", value=f"{psutil.disk_usage('/').percent}％", inline=False)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @tasks.command(name="time", description="サーバーの起動時刻を確認します。")
+    async def all(self, interaction: discord.ApplicationContext):
+
+        time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+
+        embed = discord.Embed(title="サーバー起動時刻", description="サーバーの起動時刻を表示しています。", color=0x4169e1)
+        embed.add_field(name="サーバー起動時刻", value=f"{time}", inline=False)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 def setup(bot):
     bot.add_cog(tasks(bot))
