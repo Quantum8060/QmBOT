@@ -66,7 +66,7 @@ class say(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name='say', description="BOTが送信します。")
+    @discord.slash_command(name='say', description="BOTが発言します。")
     @commands.is_owner()
     async def anonymous(self, interaction: discord.ApplicationContext, text: discord.Option(str, description="メッセージを入力してください。")):
         user_id = str(interaction.author.id)
