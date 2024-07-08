@@ -31,7 +31,7 @@ class anonymous(commands.Cog):
 
     @discord.slash_command(name='anonymous', description="匿名で送信します。")
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def anonymous(self, interaction: discord.ApplicationContext, text: discord.Option(str, description="匿名メッセージを送信します。"), picture: discord.Attachment = None):
+    async def anonymous(self, interaction: discord.ApplicationContext, text: discord.Option(discord.SlashCommandOptionType.string, description="匿名メッセージを送信します。") =None, picture: discord.Attachment = None):
         user_id = str(interaction.author.id)
         server_id = str(interaction.guild.id)
 
@@ -54,6 +54,14 @@ class anonymous(commands.Cog):
 
                     await interaction.respond("匿名メッセージを送信しました。", ephemeral=True)
                     await interaction.channel.send(embed=embed)
+                elif picture:
+                    embed=discord.Embed()
+                    embed.set_image(url=picture.url)
+
+                    await interaction.respond("匿名メッセージを送信しました。", ephemeral=True)
+                    await interaction.channel.send(embed=embed)
+                else:
+                    await interaction.respond("テキストか画像を送信してください。", ephemeral=True)
             else:
                 await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
         else:
