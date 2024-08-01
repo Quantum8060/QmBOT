@@ -13,6 +13,7 @@ import asyncio
 import random
 import string
 from dotenv import load_dotenv
+import random
 
 
 intents = discord.Intents.default()
