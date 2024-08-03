@@ -27,7 +27,7 @@ class tasks(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @tasks.command(name="cpu", description="CPUの使用状況を確認します。")
-    async def all(self, interaction: discord.ApplicationContext):
+    async def cpu(self, interaction: discord.ApplicationContext):
 
         time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -38,7 +38,7 @@ class tasks(commands.Cog):
 
 
     @tasks.command(name="ram", description="メモリの使用状況を確認します。")
-    async def all(self, interaction: discord.ApplicationContext):
+    async def ram(self, interaction: discord.ApplicationContext):
 
         time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -48,7 +48,7 @@ class tasks(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @tasks.command(name="rom", description="ストレージの使用状況を確認します。")
-    async def all(self, interaction: discord.ApplicationContext):
+    async def rom(self, interaction: discord.ApplicationContext):
 
         time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -58,7 +58,7 @@ class tasks(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @tasks.command(name="time", description="サーバーの起動時刻を確認します。")
-    async def all(self, interaction: discord.ApplicationContext):
+    async def time(self, interaction: discord.ApplicationContext):
 
         time = datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
 
