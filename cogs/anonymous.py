@@ -77,23 +77,9 @@ class say(commands.Cog):
     @discord.slash_command(name='say', description="BOTが発言します。")
     @commands.is_owner()
     async def anonymous(self, interaction: discord.ApplicationContext, text: discord.Option(str, description="メッセージを入力してください。")):
-        user_id = str(interaction.author.id)
-        server_id = str(interaction.guild.id)
 
-        data = load_data()
-        l_data = load_lock_data()
-
-        if server_id not in l_data:
-
-            if user_id not in data:
-                await interaction.response.send_message("送信しました。", ephemeral=True)
-                await interaction.send(text)
-            else:
-                await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
-        else:
-            await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
-
-
+        await interaction.response.send_message("送信しました。", ephemeral=True)
+        await interaction.send(text)
 
 
 
