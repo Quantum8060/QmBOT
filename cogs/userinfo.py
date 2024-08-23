@@ -89,9 +89,3 @@ class userinfo_c(commands.Cog):
 def setup(bot):
     bot.add_cog(userinfo(bot))
     bot.add_cog(userinfo_c(bot))
-
-
-
-
-
-
