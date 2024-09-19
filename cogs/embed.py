@@ -36,7 +36,7 @@ class EmbedModal(discord.ui.Modal):
 
     async def callback(self, interaction: discord.Interaction):
 
-        embed = discord.Embed(title=self.children[0].value, color=0x4169e1)
+        embed = discord.Embed(description=self.children[0].value, color=0x4169e1)
         embed.add_field(name="", value="")
 
         async with aiohttp.ClientSession() as session:

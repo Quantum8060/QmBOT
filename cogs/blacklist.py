@@ -33,8 +33,6 @@ class blacklist(commands.Cog):
 
         user_id = await self.bot.fetch_user(f"{user.id}")
 
-        data = load_blacklist_data()
-
         if user_id not in data:
             await interaction.respond(f"{user.mention}をブラックリストに追加しました。", ephemeral=True)
 
