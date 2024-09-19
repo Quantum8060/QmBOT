@@ -27,12 +27,12 @@ class support(commands.Cog):
         l_data = load_lock_data()
 
         if server_id not in l_data:
-                button = discord.ui.Button(label="Join!", style=discord.ButtonStyle.primary, url="https://discord.gg/Ch4XZdSqPK")
-                embed=discord.Embed(title="Join support server!", description="サポートサーバーに参加する場合は下のボタンを押してください。", color=0x4169e1)
-                embed.add_field(name="※ブラックリストの異議申し立てに関して", value="異議申し立てはサポートサーバーで行ってください。\nその際、ブラックリストに追加したユーザーにも聴取を行うためユーザーIDを取得してきてください。")
-                view = discord.ui.View()
-                view.add_item(button)
-                await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+            button = discord.ui.Button(label="Join!", style=discord.ButtonStyle.primary, url="https://discord.gg/Ch4XZdSqPK")
+            embed=discord.Embed(title="Join support server!", description="サポートサーバーに参加する場合は下のボタンを押してください。", color=0x4169e1)
+            embed.add_field(name="※ブラックリストの異議申し立てに関して", value="異議申し立てはサポートサーバーで行ってください。\nその際、ブラックリストに追加したユーザーにも聴取を行うためユーザーIDを取得してきてください。")
+            view = discord.ui.View()
+            view.add_item(button)
+            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
         else:
             await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
 
