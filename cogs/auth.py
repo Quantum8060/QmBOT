@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import MissingPermissions
 import json
 import random
+import sqlite3
 
 Debug_guild = [1235247721934360577]
 
@@ -28,11 +29,30 @@ def save_lock_data(data):
 
 
 
-class authReady(commands.cogs):
+conn = sqlite3.connect('bot.db')
+c = conn.cursor()
+
+c.execute('''CREATE TABLE IF NOT EXISTS message_id
+             (id TEXT PRIMARY KEY, roleid INTEGER )''')
+
+conn.commit()
+
+def save_auth(message_id, roleid):
+    with conn:
+        c.execute("INSERT OR IGNORE INTO message_id (id, roleid) VALUES (?, ?)", (message_id, roleid))
+        c.execute("UPDATE message_id SET roleid = ? WHERE id = ?", (roleid, message_id))
+
+def get_auth_info(user_id):
+    c.execute("SELECT id, roleid FROM message_id WHERE id = ?", (user_id,))
+    return c.fetchone()
+
+
+
+class authReady(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener
+    @commands.Cog.listener()
     async def on_ready(self):
         self.bot.add_view(authView())
 
@@ -51,7 +71,7 @@ class authModal(discord.ui.Modal):
 
         if self.children[0].value == str(auth_math):
 
-            role = interaction.guild.get_role(role_id)
+            role = interaction.guild.get_role(role_id[1])
 
             embed = discord.Embed(title="認証成功", description="認証に成功しました。", color=0x00ff00)
 
@@ -68,11 +88,13 @@ class authView(discord.ui.View):
 
     @discord.ui.button(label="認証", custom_id="auth-button", style=discord.ButtonStyle.primary)
     async def auth(self, button: discord.ui.Button, interaction):
+        m_id = interaction.message.id
 
-        global auth_math, random1, random2
+        global auth_math, random1, random2, role_id
         random1 = random.randint(0, 10)
         random2 = random.randint(0, 10)
         auth_math = random1 * random2
+        role_id = get_auth_info(m_id)
 
         modal = authModal(title=f"{str(random1)} × {str(random2)}")
         await interaction.response.send_modal(modal)
@@ -86,9 +108,9 @@ class auth(commands.Cog):
 
     @discord.slash_command(name="auth", description="認証パネルを設置します。")
     @commands.has_permissions(administrator=True)
-    async def auth(self, ctx: discord.ApplicationContext, role: discord.Role):
-        user_id = str(ctx.author.id)
-        server_id = str(ctx.guild.id)
+    async def auth(self, interaction: discord.ApplicationContext, role: discord.Role):
+        user_id = str(interaction.author.id)
+        server_id = str(interaction.guild.id)
 
         data = load_data()
         l_data = load_lock_data()
@@ -97,24 +119,26 @@ class auth(commands.Cog):
 
             if user_id not in data:
                 embed = discord.Embed(title="認証パネル", description="下のボタンを押して認証を開始してください。")
-                await ctx.respond("認証用パネルを設置しました。", ephemeral=True)
-                await ctx.send(embed=embed, view=authView())
+                await interaction.response.send_message("認証パネルを作成しました。", ephemeral=True)
 
-                global role_id
-                role_id = role.id
+                message = await interaction.followup.send(embed=embed, view=authView())
+                message_id = str(message.id)
+                roleid = int(role.id)
+                save_auth(message_id, roleid)
             else:
-                await ctx.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+                await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
         else:
-            await ctx.response.send_message("このサーバーはロックされています。", ephemeral=True)
+            await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
 
     @auth.error
-    async def autherror(ctx, error):
+    async def autherror(self, interaction, error):
         if isinstance(error, MissingPermissions):
-            await ctx.respond("あなたはこのコマンドを使用する権限を持っていません!", ephemeral=True)
+            await interaction.respond("あなたはこのコマンドを使用する権限を持っていません!", ephemeral=True)
         else:
-            await ctx.respond("Something went wrong...", ephemeral=True)
+            await interaction.respond("Something went wrong...", ephemeral=True)
             raise error
 
 
 def setup(bot):
     bot.add_cog(auth(bot))
+    bot.add_cog(authReady(bot))
