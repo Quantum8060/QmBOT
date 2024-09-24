@@ -165,56 +165,31 @@ def stop_py():
 
 
 
-#group test
-math = discord.SlashCommandGroup("math", "Math related commands")
-
-@math.command(name="add", description="足します。")
-async def add(ctx, num1: int, num2: int):
-  sum = num1 + num2
-  await ctx.respond(f"{sum}")
-
-@math.command(name="subtract", description="引きます。")
-async def subtract(ctx, num1: int, num2: int):
-  sum = num1 - num2
-  await ctx.respond(f"{sum}")
-
-@math.command(name="multiplication",description="掛けます。")
-async def multiplication(ctx, num1: int, num2: int):
-  sum = num1 * num2
-  await ctx.respond(f"{sum}")
-
-@math.command(name="division", description="割ります")
-async def division(ctx, num1: int, num2: int):
-  sum = num1 / num2
-  await ctx.respond(f"{sum}")
-
-bot.add_application_command(math)
-
-
 #cogs登録
 cogs_list = [
-    'clear',
-    'ping',
-    'userinfo',
-    'invite',
-    'support',
-    'serverinfo',
-    'mcstatus',
-    'servericon',
     'anonymous',
-    'youtube',
-    'embed',
-    'dm',
-    'ban',
-    'kick',
-    'channel',
-    'tasks',
     'avatar',
-    'status',
-    'lock',
-    'random',
+    'ban',
     'blacklist',
-    'stop'
+    'channel',
+    'clear',
+    'dm',
+    'embed',
+    'invite',
+    'kick',
+    'lock',
+    'math',
+    'mcstatus',
+    'ping',
+    'random',
+    'serverinfo',
+    'servericon',
+    'status',
+    'stop',
+    'support',
+    'tasks',
+    'userinfo',
+    'youtube',
 ]
 
 for cog in cogs_list:
