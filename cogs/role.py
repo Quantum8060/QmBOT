@@ -82,7 +82,7 @@ class role(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="role", description="認証パネルを設置します。", guild_ids=Debug_guild)
+    @discord.slash_command(name="role", description="ロールパネルを設置します。", guild_ids=Debug_guild)
     @commands.has_permissions(administrator=True)
     async def role(self, interaction: discord.ApplicationContext, role: discord.Role):
         user_id = str(interaction.author.id)
