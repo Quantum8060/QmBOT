@@ -183,6 +183,7 @@ cogs_list = [
     'mcstatus',
     'ping',
     'random',
+    'role',
     'serverinfo',
     'servericon',
     'status',
