@@ -27,27 +27,7 @@ def save_lock_data(data):
     with open(lock_file, 'w') as file:
         json.dump(data, file, indent=4)
 
-class EmbedModal(discord.ui.Modal):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        self.add_item(discord.ui.InputText(label="埋め込むメッセージを入力してください。", style=discord.InputTextStyle.long))
-
-
-    async def callback(self, interaction: discord.Interaction):
-
-        embed = discord.Embed(description=self.children[0].value, color=0x4169e1)
-        embed.add_field(name="", value="")
-
-        async with aiohttp.ClientSession() as session:
-
-            avatar = await interaction.user.avatar.read()
-
-            webhook = await interaction.channel.create_webhook(name=f"{interaction.user.display_name}", avatar=avatar)
-
-        await webhook.send(embed=embed)
-        await interaction.response.send_message("送信しました。", ephemeral=True)
-        await webhook.delete()
+user_dict = {}
 
 
 class embed(commands.Cog):
@@ -55,23 +35,67 @@ class embed(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
     @discord.slash_command(name="embed", description="メッセージを埋め込みにして送信します。")
-    async def webhookembed(self, interaction: discord.ApplicationContext):
-        user_id = str(interaction.author.id)
-        server_id = str(interaction.guild.id)
+    @commands.has_permissions(administrator=True)
+    async def webhookembed(self, interaction):
+        user_id = interaction.author.id
 
-        data = load_data()
-        l_data = load_lock_data()
-
-        if server_id not in l_data:
-            if user_id not in data:
-                modal = EmbedModal(title="Embedコマンド")
-                await interaction.send_modal(modal)
-                await interaction.respond("フォームでの入力を待機しています…", ephemeral=True)
-            else:
-                await interaction.response.send_message("あなたはブラックリストに登録されています。", ephemeral=True)
+        if user_id in user_dict:
+            # 辞書にユーザーが存在する場合、削除
+            user_dict.pop(user_id)
+            await interaction.respond("埋め込み送信モードを終了しました。", ephemeral=True)
         else:
-            await interaction.response.send_message("このサーバーはロックされています。", ephemeral=True)
+            # 辞書にユーザーが存在しない場合、追加
+            user_dict[user_id] = interaction.author.name
+            await interaction.respond("埋め込み送信モードが起動しました", ephemeral=True)
+
+class embed_message(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        user_id = message.author.id
+
+        if user_id in user_dict and not message.author.bot:
+
+            embed = discord.Embed(description=message.content, color=0x4169e1)
+            embed.set_author(name=message.author.display_name, icon_url=message.author.avatar.url)
+
+            if message.attachments:
+                for attachment in message.attachments:
+                    if attachment.content_type.startswith("image/"):
+                        embed.set_image(url=attachment.url)
+                        break  # 最初の画像のみを埋め込みに表示
+
+            # メンションのリストを作成
+            mentions = [mention.mention for mention in message.mentions]
+            role_mentions = [role.mention for role in message.role_mentions]
+            if message.mention_everyone:
+                mentions.append("@everyone")
+            mention_text = " ".join(mentions + role_mentions)
+
+            # 返信元メッセージが存在するかチェック
+            if message.reference:
+                replied_message = await message.channel.fetch_message(message.reference.message_id)
+                # メンション付きでメッセージを送信
+                if mention_text:
+                    await replied_message.reply(content=mention_text, embed=embed)
+                    await message.delete()
+                else:
+                    await replied_message.reply(embed=embed)
+                    await message.delete()
+
+            else:
+                # メンション付きでメッセージを送信
+                if mention_text:
+                    await message.channel.send(content=mention_text, embed=embed)
+                    await message.delete()
+                else:
+                    await message.channel.send(embed=embed)
+                    await message.delete()
 
 def setup(bot):
     bot.add_cog(embed(bot))
+    bot.add_cog(embed_message(bot))
