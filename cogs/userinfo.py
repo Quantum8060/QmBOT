@@ -47,7 +47,7 @@ class userinfo(commands.Cog):
             if server_id not in l_data:
                 if user_id not in data:
                     try:
-                        embed = discord.Embed(title="User Info", description=f" <@!{user}>", color=0x4169e1)
+                        embed = discord.Embed(title="User Info", color=0x4169e1)
                         embed.set_thumbnail(url=user.avatar.url)
                     except:
                         pass
