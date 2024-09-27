@@ -3,7 +3,7 @@ Quantumが開発する多機能Discord Botです。
 
 同者が開発する他BOTはこのBOTから派生して独自の機能を付与されたものとなっています。
 
-# 招待リンク
+## 招待リンク
 **[BOTの招待はここから](https://discord.com/oauth2/authorize?client_id=1057679845087252521&permissions=8&integration_type=0&scope=bot+applications.commands)**
 
 ## コマンド一覧
